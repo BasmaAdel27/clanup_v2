@@ -1,0 +1,14 @@
+# .htaccess main domain to subfolder redirect
+RewriteEngine on
+
+RewriteCond %{HTTP_HOST} ^(www.)?clanup.net$
+RewriteCond %{REQUEST_URI} !^/public/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^(.*)$ /public/$1
+
+RewriteCond %{HTTP_HOST} ^(www.)?clanup.net$
+
+RewriteRule ^(/)?$ public/index.html [L]
