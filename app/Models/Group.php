@@ -58,7 +58,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Returns all the memberships of the group
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function memberships()
@@ -66,9 +66,10 @@ class Group extends Model implements HasMedia
         return $this->hasMany(GroupMembership::class);
     }
 
+
     /**
      * Returns all the events of the group
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function events()
@@ -78,7 +79,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Returns all the discussions of the group
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function discussions()
@@ -88,7 +89,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Returns all the sponsors of the group
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function sponsors()
@@ -110,7 +111,7 @@ class Group extends Model implements HasMedia
      * Get specified setting of group
      *
      * @param string $key
-     * 
+     *
      * @return mixed
      */
     public function getSetting($key)
@@ -125,7 +126,7 @@ class Group extends Model implements HasMedia
      *
      * @param string $key
      * @param string $value
-     * 
+     *
      * @return void
      */
     public function setSetting($key, $value)
@@ -136,7 +137,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Returns all the organizers of this group.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function organizers()
@@ -149,7 +150,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Returns all the co-organizers of this group.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function co_organizers()
@@ -162,7 +163,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Returns all the assistant organizers of this group.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function assistant_organizers()
@@ -175,7 +176,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Returns all the event organizers of this group.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function event_organizers()
@@ -188,7 +189,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Returns all the EVENT_ORGANIZER, ASSISTANT_ORGANIZER, CO_ORGANIZER and ORGANIZER of this group.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function all_organizers()
@@ -201,9 +202,10 @@ class Group extends Model implements HasMedia
 
     /**
      * Returns all the members of this group.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
+
     public function members()
     {
         return $this->belongsToMany(User::class, 'group_memberships')
@@ -212,9 +214,15 @@ class Group extends Model implements HasMedia
             ->withPivot('membership');
     }
 
+    public function membersship()
+    {
+        return $this->belongsToMany(User::class, 'group_memberships')
+            ->withTimestamps()
+            ->withPivot('membership');;
+    }
     /**
      * Returns all the candidates of this group.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function candidates()
@@ -248,7 +256,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Returns the organizer attribute of this group.
-     * 
+     *
      * @return \App\Models\User
      */
     public function getOrganizerAttribute()
@@ -258,7 +266,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Return Default Image Url
-     * 
+     *
      * @return url
      */
     public function getDefaultImage()
@@ -271,14 +279,14 @@ class Group extends Model implements HasMedia
 
     /**
      * Get the avatar attribute
-     * 
+     *
      * @return url
      */
     public function getAvatarAttribute()
     {
         $last_media = $this->getMedia('featured_photo')->last();
         return  $last_media ? $last_media->getFullUrl() : $this->getDefaultImage();
-    } 
+    }
 
     /**
      * Get member_count attribute
@@ -292,7 +300,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Scope a query to filter groups by given parameters.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string                                $search
      * @param float                                 $lat
@@ -300,17 +308,24 @@ class Group extends Model implements HasMedia
      * @param int                                   $radius
      * @param int                                   $category
      * @param int                                   $topic
+     * @param string                                   $place
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeFilter($query, $search, $lat, $lng, $radius, $category, $topic)
+    public function scopeFilter($query, $search,$place,$category, $topic)
     {
+
         // Filter by search param
         if ($search) $query = $query->search($search);
 
         // Filter by distance
-        if ($lat && $lng) $query = $query->distance($lat, $lng, $radius);
+//        if ($lat && $lng) $query = $query->distance($lat, $lng, $radius);
 
+        if ($place)
+            $data=explode(',',$place);
+             $query= $query->whereHas('addresses', function($q) use ($place,$data){
+                 $q->where('name', 'like', '%' . $place . '%')->orwhere('city', 'like', '%' . $data[0] . '%');
+        });
         // Filter by category
         if ($category) {
             $topics_ids = Topic::where('topic_category_id', $category)->pluck('id')->toArray();
@@ -345,7 +360,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Scope a query by search organizer
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string                                $search
      *
@@ -360,7 +375,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Scope a query to only include groups in given location and distance
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param float                                 $lat
      * @param float                                 $lng
@@ -370,14 +385,14 @@ class Group extends Model implements HasMedia
      */
     public function scopeDistance($query, $lat, $lng, $radius = 5)
     {
-        return $query->whereHas('addresses', function($q) use ($lat, $lng, $radius) { 
+        return $query->whereHas('addresses', function($q) use ($lat, $lng, $radius) {
             $q->isWithinMaxDistance($lat, $lng, $radius);
         });
     }
 
     /**
      * Scope a query to only include open groups.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -389,7 +404,7 @@ class Group extends Model implements HasMedia
 
     /**
      * Scope a query to only include closed groups.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder

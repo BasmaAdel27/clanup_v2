@@ -1,3 +1,5 @@
+
+
 <div wire:key="{{ time().$group->uid }}" class="row">
     <div class="col-12 col-md-2">
         <a href="{{ route('groups.about', $group->slug) }}">
@@ -30,6 +32,7 @@
                 @livewire('common.share-button', ['icon_class' => 'ms-2', 'button' => false, 'url' => route('groups.about', $group->slug)], key($group->id))
             </div>
         </div>
-    </div> 
+    </div>
     <div class="col-12"><hr></div>
 </div>
+

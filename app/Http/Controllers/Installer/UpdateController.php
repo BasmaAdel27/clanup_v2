@@ -17,7 +17,7 @@ class UpdateController extends Controller
     {
         $migrations = $this->getMigrations();
         $dbMigrations = $this->getExecutedMigrations();
-        
+
         // If the count of migrations and dbMigrations is equal,
         // then the update as already been updated.
         if (count($migrations) == count($dbMigrations) && request()->route()->getName() != 'updater.final') {

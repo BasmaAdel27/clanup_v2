@@ -21,18 +21,18 @@
                     <label class="form-label" for="first_name">{{ __('First name') }}</label>
                     <input class="form-control" name="first_name" type="text" placeholder="{{ __('First name') }}" value="{{ old('first_name') }}" required />
                 </div>
-    
+
                 <div class="col-md-6">
                     <label class="form-label" for="last_name">{{ __('Last name') }}</label>
                     <input class="form-control" name="last_name" type="text" placeholder="{{ __('Last name') }}" value="{{ old('last_name') }}" required />
                 </div>
             </div>
-    
+
             <div class="mb-4">
                 <label class="form-label" for="email">{{ __('Email') }}</label>
                 <input class="form-control" name="email" type="email" placeholder="name@address.com" value="{{ old('email') }}" required />
             </div>
-    
+
             <div class="mb-4">
                 <label class="form-label" for="password">{{ __('Password') }}</label>
                 <input class="form-control" name="password" placeholder="{{ __('Password') }}" type="password" required />
@@ -42,7 +42,7 @@
                 <label class="form-label" for="password_confirmation">{{ __('Confirm Password') }}</label>
                 <input class="form-control" name="password_confirmation" placeholder="{{ __('Confirm Password') }}" type="password" required />
             </div>
-    
+
             <div class="form-footer">
                 @if(\App\Models\SystemSetting::isRecaptchaActive())
                     <button class="btn btn-primary w-100 g-recaptcha" data-sitekey="{{ get_system_setting('google_recapthca_key') }}" data-callback="onSubmit" data-action="submit">{{ __('Register') }}</button>

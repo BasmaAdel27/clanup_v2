@@ -19,7 +19,7 @@
     <div class="container-fluid px-3">
         <div class="row d-flex justify-content-center">
             <div class="col-md-6">
-               
+
                 <div class="w-100 py-5 px-md-5 px-xxl-6 position-relative">
                     <div class="mb-5">
                         <img class="img-fluid mb-3" src="{{ url('/assets/images/logo.svg') }}" alt="Network" />

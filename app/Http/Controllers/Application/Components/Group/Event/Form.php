@@ -87,7 +87,7 @@ class Form extends Component
         }
     }
 
-    // Populate data 
+    // Populate data
     private function populate_data($status)
     {
         // Validate Input

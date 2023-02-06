@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class EventRSVP extends Model
 {
     // Table name
@@ -42,7 +43,7 @@ class EventRSVP extends Model
 
     /**
      * Automatically cast attributes to given types
-     * 
+     *
      * @var array
      */
     protected $casts = [
@@ -50,9 +51,10 @@ class EventRSVP extends Model
         'guests' => 'integer',
     ];
 
+
     /**
      * Returns the event of this RSVP
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function event()
@@ -62,9 +64,10 @@ class EventRSVP extends Model
 
     /**
      * Returns the user of this RSVP
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+
     public function user()
     {
         return $this->belongsTo(User::class)->withDefault();
@@ -72,7 +75,7 @@ class EventRSVP extends Model
 
     /**
      * Mark as Coming
-     * 
+     *
      * @return $this
      */
     public function isComing()
@@ -82,7 +85,7 @@ class EventRSVP extends Model
 
     /**
      * Mark as Coming
-     * 
+     *
      * @return $this
      */
     public function markAsComing()
@@ -92,7 +95,7 @@ class EventRSVP extends Model
 
     /**
      * Mark as Not Coming
-     * 
+     *
      * @return $this
      */
     public function markAsNotComing()

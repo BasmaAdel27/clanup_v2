@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Rules\ReCaptchaRule;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -30,7 +31,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -87,7 +88,7 @@ class RegisterController extends Controller
      * @return \App\Models\User
      */
     protected function create(array $data)
-    { 
+    {
         // Create new User
         $user = User::create([
             'first_name' => $data['first_name'],
@@ -96,7 +97,11 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
             'role' => 'user'
         ]);
-
+        $user->sendEmailVerificationNotification();
         return $user;
     }
 }
+
+
+
+

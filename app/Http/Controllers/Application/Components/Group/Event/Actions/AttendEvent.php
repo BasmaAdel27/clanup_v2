@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Application\Components\Group\Event\Actions;
 
 use App\Models\EventRSVP;
 use Livewire\Component;
+use App\Services\Notification\Notification;
+use App\Notifications\Event\AttendEvents;
 
 class AttendEvent extends Component
 {
@@ -60,13 +62,18 @@ class AttendEvent extends Component
 
         // Save the RSVP on the database
         $rsvp = EventRSVP::updateOrCreate(
-            ['event_id' => $this->event->id, 'user_id' => $user->id], 
+            ['event_id' => $this->event->id, 'user_id' => $user->id],
             ['response' => $user->isMemberOf($this->event->group) ? EventRSVP::COMING : EventRSVP::WAITING_APPROVAL, 'pay_status' => EventRSVP::NONE]
         );
 
+
         if ($rsvp && ($rsvp->response == EventRSVP::COMING || $rsvp->response == EventRSVP::WAITING_APPROVAL)) {
+            $all_organizers = $rsvp->event->group->all_organizers;
             $this->show_modal();
+            Notification::send($all_organizers, new AttendEvents($rsvp));
+
         }
+
     }
 
     public function update_rsvp($response)
@@ -90,7 +97,7 @@ class AttendEvent extends Component
         $this->update_rsvp_inputs($rsvp);
         $this->close_modal();
     }
-    
+
     public function render()
     {
         return view('application.components.group.event.actions.attend-event');

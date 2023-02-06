@@ -164,8 +164,9 @@
                                 </div>
                                 <div class="col">
                                     <div class="fs-4 text-muted">{{ __('Organized by') }}</div>
-                                    <div class="fs-3 fw-bold">{{ $organizer->full_name }}</div>
+                                    <a class="fs-3 fw-bold text-decoration-none text-dark" href="{{ route('profile', ['user' => $organizer->username]) }}">{{ $organizer->full_name }}</a>
                                 </div>
+                                {{--                                    <div class="fs-3 fw-bold">{{ $organizer->full_name }}</div>--}}
                             </div>
                         </div>
                     </div>
@@ -180,8 +181,9 @@
                     </div>
                     <div class="avatar-list">
                         @can('view_members', $group)
-                            @foreach ($members as $member) 
-                                <img class="avatar avatar-md rounded-circle border" src="{{ $member->avatar }}" alt="{{ $member->first_name }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ $member->full_name }}"/>
+                            @foreach ($members as $member)
+                                <a href="{{ route('profile', $member->username) }}" class="avatar avatar-md rounded-circle border" style="background-image: url({{ $member->avatar }})" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $member->full_name }}"></a>
+{{--                                <img class="avatar avatar-md rounded-circle border" src="{{ $member->avatar }}" alt="{{ $member->first_name }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ $member->full_name }}"/>--}}
                             @endforeach
                         @else
                             <div class="col-12">

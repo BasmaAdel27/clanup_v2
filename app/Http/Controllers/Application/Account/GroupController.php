@@ -13,7 +13,7 @@ class GroupController extends Controller
      * Display the My Groups Page
      *
      * @param  \Illuminate\Http\Request $request
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -34,5 +34,14 @@ class GroupController extends Controller
             'groups' => $groups,
             'tab' => $tab,
         ]);
-    } 
+    }
+    public function suggested_groups(Request $request){
+        $user = $request->user();
+        $joined_group_ids = $user->groups()->pluck('group_id')->toArray();
+        $limit=10;
+        $groups= Group::where('group_type',0)->whereNotIn('id',$joined_group_ids)->paginate($limit);
+        return view('application.account.all_suggestedGroups', [
+            'groups' => $groups,
+        ]);
+    }
 }

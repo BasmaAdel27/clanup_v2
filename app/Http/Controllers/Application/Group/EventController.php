@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventRSVP;
 use App\Models\Group;
+use App\Models\User;
 use App\Services\CSVExport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -15,9 +17,36 @@ class EventController extends Controller
      * Display upcoming events page of group
      *
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
+
+    public function addAttendes(Request $request,Group $group,Event $event){
+        if ($request->user()->cant('create', [Event::class, $group])) {
+            return redirect()->to(route('groups.events', ['group' => $group->slug]) . '#events');
+        }
+        $users=User::select(DB::raw("CONCAT (first_name,' ',last_name) as name, id"))->get();
+        $members=EventRSVP::where('event_id',$event->id)->pluck('user_id')->toArray();
+        return view('application.groups.events.addAttendees', [
+            'group' => $group,
+            'event'=>$event,
+            'users'=>$users,
+            'members'=>$members
+
+        ]);
+    }
+
+    public function update(Request $request,Group $group,Event $event){
+        if ($request->user()->cant('create', [Event::class, $group])) {
+            return redirect()->to(route('groups.events', ['group' => $group->slug]) . '#events');
+        }
+        foreach ($request['user_id'] as $user) {
+            $data[$user]['response'] =  1;
+        }
+        $event->attends()->sync($data);
+            session()->flash('alert-success', __('add members updated'));
+        return redirect()->back();
+    }
     public function upcoming_events(Group $group)
     {
         // Log visit
@@ -30,14 +59,14 @@ class EventController extends Controller
             'events' => $events,
             'tab' => 'upcoming',
         ]);
-    } 
+    }
 
     /**
      * Display draft events page of group
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function draft_events(Request $request, Group $group)
@@ -56,13 +85,13 @@ class EventController extends Controller
             'events' => $events,
             'tab' => 'draft',
         ]);
-    } 
+    }
 
     /**
      * Display past events page of group
      *
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function past_events(Group $group)
@@ -77,14 +106,14 @@ class EventController extends Controller
             'events' => $events,
             'tab' => 'past',
         ]);
-    } 
+    }
 
     /**
      * Display create event page
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request, Group $group)
@@ -97,14 +126,14 @@ class EventController extends Controller
         return view('application.groups.events.create', [
             'group' => $group
         ]);
-    } 
+    }
 
     /**
      * Display event details page
      *
      * @param  \App\Models\Group $group
      * @param  \App\Models\Event $event
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function show(Group $group, Event $event)
@@ -121,7 +150,8 @@ class EventController extends Controller
             'sponsors' => $sponsors,
             'attendees' => $attendees,
         ]);
-    } 
+    }
+
 
     /**
      * Display edit event page
@@ -129,7 +159,7 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
      * @param  \App\Models\Event $event
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request, Group $group, Event $event)
@@ -150,7 +180,7 @@ class EventController extends Controller
      *
      * @param  \App\Models\Group $group
      * @param  \App\Models\Event $event
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function attendees(Group $group, Event $event)
@@ -167,7 +197,7 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
      * @param  \App\Models\Event $event
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function export_attendees(Request $request, Group $group, Event $event)
@@ -189,7 +219,7 @@ class EventController extends Controller
                     $rsvp->isComing() ? __('Yes') : __('No'),
                     $rsvp->guests,
                     $rsvp->question_answer,
-                    $rsvp->created_at->format('M d, Y'), 
+                    $rsvp->created_at->format('M d, Y'),
                     route('profile', $rsvp->user->username),
                 ];
             })->export();
@@ -201,7 +231,7 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
      * @param  \App\Models\Event $event
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function close_rsvp(Request $request, Group $group, Event $event)
@@ -223,7 +253,7 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
      * @param  \App\Models\Event $event
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function open_rsvp(Request $request, Group $group, Event $event)
@@ -245,7 +275,7 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
      * @param  \App\Models\Event $event
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function cancel(Request $request, Group $group, Event $event)
@@ -272,7 +302,7 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
      * @param  \App\Models\Event $event
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function announce(Request $request, Group $group, Event $event)

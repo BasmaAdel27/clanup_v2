@@ -56,7 +56,7 @@ trait HasAddresses
      */
     public function getAddressAttribute(): ?Model
     {
-        return $this->hasAddress('main') 
+        return $this->hasAddress('main')
             ? $this->addresses()->whereRole('main')->first()
             : new Address();
     }
@@ -70,4 +70,5 @@ trait HasAddresses
     {
         return !empty($this->setAddress($role, null));
     }
+
 }

@@ -40,6 +40,7 @@
                     </div>
                     <div class="col fs-3">
                         @if($group->co_organizers()->count() == 1)
+{{--                            // Organizer name clickable to profile--}}
                             {!! __('Organized by <strong>:organizer_name</strong>, and <strong>:co_organizer_name</strong>', [
                                 'organizer_name' => $group->createdBy->full_name,
                                 'co_organizer_name' => $group->co_organizers()->first()->full_name,

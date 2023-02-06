@@ -26,17 +26,17 @@
     <div class="row d-flex justify-content-center {{ $step == 'location' ? '' : 'd-none' }}">
         <div class="row d-flex justify-content-center pb-3">
             <div class="col-md-6">
-                <p class="text-center">{{ __('Step 1/4') }}</p>
+                <p class="text-center">{{ __('Step 1/5') }}</p>
             </div>
         </div>
         <div class="col-md-8">
-            <h1>{{ __('First, set your group\'s location.') }}</h1> 
+            <h1>{{ __('First, set your group\'s location.') }}</h1>
             <p>{{ __(':app_name groups meet locally, in person and online. We\'ll connect you with people in your area, and more can join you online.', ['app_name' => $application_name]) }}</p>
             <div class="input-icon mb-3 place_autocomplete_container">
                 <span class="input-icon-addon">
-                    <i class="fa fa-map-pin"></i> 
+                    <i class="fa fa-map-pin"></i>
                 </span>
-                <input id="place_autocomplete" class="form-control place_autocomplete" data-type="(regions)" autocomplete="off" placeholder="{{ __('Location') }}" type="text" name="location_name" wire:model="location_name" wire:keydown.enter="next" wire:ignore>
+                <input id="place_autocomplete" class="form-control place_autocomplete" data-type="(regions)" autocomplete="off" placeholder="{{ __('Location') }}" type="text" name="location_name" wire:model="location_name" wire:click="next" wire:ignore>
                 <input type="hidden" name="place" id="place_name" wire:model="place_name">
                 <input type="hidden" name="address_1" id="address_1" wire:model="formatted_address">
                 <input type="hidden" name="lat" id="lat" wire:model="lat">
@@ -58,7 +58,7 @@
     <div class="row d-flex justify-content-center {{ $step == 'topics' ? '' : 'd-none' }}">
         <div class="row d-flex justify-content-center pb-3">
             <div class="col-md-6">
-                <p class="text-center">{{ __('Step 2/4') }}</p>
+                <p class="text-center">{{ __('Step 2/5') }}</p>
             </div>
         </div>
         <div class="col-md-8">
@@ -73,7 +73,7 @@
             </ul>
             <div class="input-icon mb-3 place_autocomplete_container">
                 <span class="input-icon-addon">
-                    <i class="fa fa-search"></i> 
+                    <i class="fa fa-search"></i>
                 </span>
                 <input class="form-control" placeholder="{{ __('Search Topics') }}" type="search" wire:model="search">
             </div>
@@ -106,7 +106,7 @@
     <div class="row d-flex justify-content-center {{ $step == 'name' ? '' : 'd-none' }}">
         <div class="row d-flex justify-content-center pb-3">
             <div class="col-md-6">
-                <p class="text-center">{{ __('Step 3/4') }}</p>
+                <p class="text-center">{{ __('Step 3/5') }}</p>
             </div>
         </div>
         <div class="col-md-8 mb-3">
@@ -122,11 +122,41 @@
             </div>
         </div>
     </div>
+    <div class="row d-flex justify-content-center {{ $step == 'status' ? '' : 'd-none' }}">
+        <div class="row d-flex justify-content-center pb-3">
+            <div class="col-md-6">
+                <p class="text-center">{{ __('Step 4/5') }}</p>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <h1>{{ __('what will your group\'s status be?') }}</h1>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" wire:model="group_status" value="public">{{__('public')}}
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" wire:model="group_status" value="private">{{__('private')}}
+                </label>
+            </div>
+        </div>
+        <div class="col-md-8 mb-3">
+            @error('group_status') <span class="error text-danger">{{ $message }}</span> @enderror
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-8 p-0">
+                <button type="button" class="btn btn-light float-start" wire:click="back">{{ __('Back') }}</button>
+                <button type="button" class="btn btn-primary float-end" wire:click="next" {{ $group_status ? '' : 'disabled' }}>{{ __('Next') }}</button>
+            </div>
+        </div>
+    </div>
+
 
     <div class="row d-flex justify-content-center {{ $step == 'describe' ? '' : 'd-none' }}">
         <div class="row d-flex justify-content-center pb-3">
             <div class="col-md-6">
-                <p class="text-center">{{ __('Step 4/4') }}</p>
+                <p class="text-center">{{ __('Step 5/5') }}</p>
             </div>
         </div>
         <div class="col-md-8" wire:ignore>

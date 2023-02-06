@@ -9,6 +9,55 @@
     @include('layouts._seo')
     @include('layouts._favicons')
     @include('layouts._css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        .chat {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat li {
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dotted #B3A9A9;
+        }
+
+        .chat li .chat-body p {
+            margin: 0;
+            color: #777777;
+        }
+
+        .panel-body {
+            overflow-y: scroll;
+            height: 350px;
+        }
+
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: #F5F5F5;
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+            background-color: #F5F5F5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: #555;
+        }
+    </style>
+
+    <!-- Scripts -->
+    <script>
+        window.Laravel = {!! json_encode([
+            'csrfToken' => csrf_token(),
+            'pusherKey' => config('broadcasting.connections.pusher.key'),
+            'pusherCluster' => config('broadcasting.connections.pusher.options.cluster'),
+        ]) !!};
+    </script>
 </head>
 
 <body>
@@ -21,7 +70,7 @@
     <div class="page">
         @include('layouts._header')
 
-        <div class="page-wrapper">
+        <div class="page-wrapper" id="app">
             @yield('content')
 
             @include('layouts.._footer')
@@ -30,8 +79,20 @@
 
     @stack('modals')
     @livewire('common.share-modal')
+{{--    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>--}}
+{{--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>--}}
+    <script src="/js/app.js"></script>
     @include('layouts._js')
     @include('layouts._autocomplete', ['types' => []])
     @include('layouts._flash')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.basic-multiple').select2({
+                placeholder: "{{__('select please')}}",
+                allowClear: true
+            });
+        });
+    </script>
 </body>
 </html>

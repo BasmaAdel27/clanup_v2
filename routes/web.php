@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Spatie\Honeypot\ProtectAgainstSpam;
 
+//Auth::routes(['verify' => true]);
+
+
 //-----------------------------------------//
 //             SITEMAP ROUTES              //
 //-----------------------------------------//
@@ -23,27 +26,29 @@ Route::get('/robots.txt', 'SitemapController@robots')->name('robots');
 //-----------------------------------------//
 //             INSTALLER ROUTES            //
 //-----------------------------------------//
-Route::group(['namespace' => 'Installer'], function () {
-    Route::get('/install', 'InstallController@welcome')->name('installer.welcome');
-    Route::get('/install/requirements', 'InstallController@requirements')->name('installer.requirements');
-    Route::get('/install/permissions', 'InstallController@permissions')->name('installer.permissions');
-    Route::get('/install/environment', 'InstallController@environment')->name('installer.environment');
-    Route::post('/install/environment/save', 'InstallController@save_environment')->name('installer.environment.save');
-    Route::get('/install/database', 'InstallController@database')->name('installer.database');
-    Route::get('/install/final', 'InstallController@finish')->name('installer.final');
-
-    // Updated
-    Route::get('/update', 'UpdateController@welcome')->name('updater.welcome');
-    Route::get('/update/overview', 'UpdateController@overview')->name('updater.overview');
-    Route::get('/update/database', 'UpdateController@database')->name('updater.database');
-    Route::get('/update/final', 'UpdateController@finish')->name('updater.final');
-});
+//Route::group(['namespace' => 'Installer'], function () {
+//    Route::get('/install', 'InstallController@welcome')->name('installer.welcome');
+//    Route::get('/install/requirements', 'InstallController@requirements')->name('installer.requirements');
+//    Route::get('/install/permissions', 'InstallController@permissions')->name('installer.permissions');
+//    Route::get('/install/environment', 'InstallController@environment')->name('installer.environment');
+//    Route::post('/install/environment/save', 'InstallController@save_environment')->name('installer.environment.save');
+//    Route::get('/install/database', 'InstallController@database')->name('installer.database');
+//    Route::get('/install/final', 'InstallController@finish')->name('installer.final');
+//
+//    // Updated
+//    Route::get('/update', 'UpdateController@welcome')->name('updater.welcome');
+//    Route::get('/update/overview', 'UpdateController@overview')->name('updater.overview');
+//    Route::get('/update/database', 'UpdateController@database')->name('updater.database');
+//    Route::get('/update/final', 'UpdateController@finish')->name('updater.final');
+//});
 
 //-----------------------------------------//
 //              PAGE ROUTES                //
 //-----------------------------------------//
 // Landing
-Route::get('/', 'IndexController@index')->name('home');
+
+Route::get('/home', 'IndexController@index')->name('home');
+Route::get('/', 'IndexController@home')->name('index');
 Route::get('/demo', 'IndexController@demo')->name('demo');
 Route::get('/change-language/{locale}', 'IndexController@change_language')->name('change_language');
 
@@ -88,7 +93,10 @@ Route::post('/webhooks/paypal/{token?}', 'Application\Checkout\Paypal\WebhookCon
 //-----------------------------------------//
 Route::impersonate();
 Route::middleware(ProtectAgainstSpam::class)->group(function () {
-    Auth::routes();
+    Auth::routes(['verify' => true]);
+    Route::get('/chat', [\App\Http\Controllers\Application\ChatsController::class,'index']);
+    Route::get('messages', [\App\Http\Controllers\Application\ChatsController::class,'fetchMessages']);
+    Route::post('messages', [\App\Http\Controllers\Application\ChatsController::class,'sendMessage']);
     Route::get('/auth/{provider}/redirect', 'Auth\LoginController@redirectToProvider')->name('social_login.redirect');
     Route::get('/auth/{provider}/callback', 'Auth\LoginController@handleProviderCallback')->name('social_login.callback');
     Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
@@ -118,7 +126,7 @@ Route::group(['namespace' => 'Application\Group'], function () {
     Route::post('/g/{group}/discussions', 'DiscussionController@store')->middleware(['auth', 'blocked_at_demo'])->name('groups.discussions.store');
     Route::get('/g/{group}/discussions/{discussion}', 'DiscussionController@details')->name('groups.discussions.details');
     Route::get('/g/{group}/discussions/{discussion}/delete', 'DiscussionController@delete')->middleware(['auth', 'blocked_at_demo'])->name('groups.discussions.delete');
-    
+
     // Discussion Comments
     Route::post('/g/{group}/discussions/{discussion}/comments', 'DiscussionCommentController@store')->middleware(['auth', 'blocked_at_demo'])->name('groups.discussions.comments.store');
     Route::get('/g/{group}/discussions/{discussion}/comments/{comment}/delete', 'DiscussionCommentController@delete')->middleware(['auth', 'blocked_at_demo'])->name('groups.discussions.comments.delete');
@@ -136,6 +144,8 @@ Route::group(['namespace' => 'Application\Group'], function () {
     Route::post('/g/{group}/events/{event}/cancel', 'EventController@cancel')->middleware(['auth', 'blocked_at_demo'])->name('groups.events.cancel');
     Route::post('/g/{group}/events/{event}/announce', 'EventController@announce')->middleware(['auth', 'blocked_at_demo'])->name('groups.events.announce');
     Route::get('/g/{group}/events/{event}/attendees', 'EventController@attendees')->middleware(['auth'])->name('groups.events.attendees');
+    Route::get('/g/{group}/events/{event}/addAttendees', 'EventController@addAttendes')->middleware(['auth'])->name('groups.events.addAttendees');
+    Route::post('/g/{group}/events/{event}/addAttendees', 'EventController@update')->middleware(['auth'])->name('groups.events.addAttendees.update');
     Route::get('/g/{group}/events/{event}/attendees/csv', 'EventController@export_attendees')->middleware(['auth', 'blocked_at_demo'])->name('groups.events.attendees.csv');
 
     // Group Settings
@@ -149,6 +159,10 @@ Route::group(['namespace' => 'Application\Group'], function () {
         // >> Member Settings
         Route::get('/g/{group}/settings/members', 'MemberSettingsController@index')->name('groups.settings.members');
         Route::post('/g/{group}/settings/members', 'MemberSettingsController@update')->middleware(['blocked_at_demo'])->name('groups.settings.members.update');
+
+        // >> add member Settings
+        Route::get('/g/{group}/settings/addMembers', 'AddMembersController@index')->name('groups.settings.addMembers');
+        Route::post('/g/{group}/settings/addMembers', 'AddMembersController@update')->name('groups.settings.addMembers.update');
 
         // >> Topic Settings
         Route::get('/g/{group}/settings/topics', 'TopicSettingsController@index')->name('groups.settings.topics');
@@ -165,7 +179,7 @@ Route::group(['namespace' => 'Application\Group'], function () {
         Route::get('/g/{group}/settings/integrations', 'IntegrationSettingsController@index')->name('groups.settings.integrations');
         Route::get('/g/{group}/settings/integrations/{integration}', 'IntegrationSettingsController@details')->name('groups.settings.integrations.details');
         Route::post('/g/{group}/settings/integrations/{integration}', 'IntegrationSettingsController@details_update')->middleware(['blocked_at_demo'])->name('groups.settings.integrations.details.update');
- 
+
         // >> Sponsor Settings
         Route::get('/g/{group}/settings/sponsors', 'SponsorSettingsController@index')->name('groups.settings.sponsors');
         Route::get('/g/{group}/settings/sponsors/new', 'SponsorSettingsController@create')->name('groups.settings.sponsors.create');
@@ -184,9 +198,11 @@ Route::get('/members/{user:username}', 'Application\Account\ProfileController@in
 
 // My Events
 Route::get('/events', 'Application\Account\EventController@index')->middleware('auth')->name('events');
+Route::get('/suggested_events', 'Application\Account\EventController@suggested_events')->middleware('auth')->name('suggested_events');
 
 // My Groups
 Route::get('/groups', 'Application\Account\GroupController@index')->middleware('auth')->name('groups');
+Route::get('/suggested_groups', 'Application\Account\GroupController@suggested_groups')->middleware('auth')->name('suggested_groups');
 
 // Account Settings
 Route::group(['namespace' => 'Application\Account\Settings', 'middleware' => 'auth'], function () {
@@ -200,6 +216,7 @@ Route::group(['namespace' => 'Application\Account\Settings', 'middleware' => 'au
     Route::post('/account/general/social', 'GeneralSettingsController@social_update')->middleware(['blocked_at_demo'])->name('account.settings.general.social.update');
     Route::get('/account/general/password', 'GeneralSettingsController@password')->name('account.settings.general.password');
     Route::post('/account/general/password', 'GeneralSettingsController@password_update')->middleware(['blocked_at_demo'])->name('account.settings.general.password.update');
+
 
     // Interests
     Route::get('/account/interests', 'InterestSettingsController@index')->name('account.settings.interests');

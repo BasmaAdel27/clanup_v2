@@ -1,4 +1,7 @@
 <?php
+
+use Database\Seeders\WorldSeeder;
+use Database\Seeders\WorldStatusSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -10,6 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+//        $this->call(WorldSeeder::class);
+//        $this->call(WorldStatusSeeder::class);
         $this->call(UsersTableSeeder::class);
         $this->call(CurrenciesTableSeeder::class);
         $this->call(CountriesTableSeeder::class);

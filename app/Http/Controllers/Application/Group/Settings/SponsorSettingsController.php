@@ -8,6 +8,7 @@ use App\Http\Requests\Application\Group\Settings\Sponsor\Update;
 use App\Models\Group;
 use App\Models\GroupSponsor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SponsorSettingsController extends Controller
 {
@@ -16,13 +17,16 @@ class SponsorSettingsController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request, Group $group)
     {
         // Authorize user
-        if ($request->user()->cant('update', $group)) {
+//        if ($request->user()->cant('update', $group)) {
+        $auth_user=Auth::user() ;
+        if (!$auth_user && !$auth_user->isOrganizerOf($group)) {
+
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
 
@@ -32,20 +36,22 @@ class SponsorSettingsController extends Controller
             'group' => $group,
             'sponsors' => $sponsors,
         ]);
-    } 
+    }
 
     /**
      * Display create sponsor page of the group
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request, Group $group)
     {
         // Check the maximum sponsor count
-        if ($request->user()->cant('store_sponsor', $group)) {
+//        if ($request->user()->cant('store_sponsor', $group)) {
+        $auth_user=Auth::user() ;
+        if (!$auth_user && !$auth_user->isOrganizerOf($group)) {
             session()->flash('alert-danger', __('You have reached maximum sponsors limit'));
             return redirect()->route('groups.settings.sponsors', ['group' => $group->slug]);
         }
@@ -56,7 +62,7 @@ class SponsorSettingsController extends Controller
             'group' => $group,
             'sponsor' => $sponsor,
         ]);
-    } 
+    }
 
 
     /**
@@ -64,13 +70,15 @@ class SponsorSettingsController extends Controller
      *
      * @param  \App\Http\Requests\Application\Group\Settings\Sponsor\Store $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Store $request, Group $group)
     {
         // Authorize user
-        if ($request->user()->cant('store_sponsor', $group)) {
+//        if ($request->user()->cant('store_sponsor', $group)) {
+        $auth_user=Auth::user() ;
+        if (!$auth_user && !$auth_user->isOrganizerOf($group)) {
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
 
@@ -87,7 +95,7 @@ class SponsorSettingsController extends Controller
 
         session()->flash('alert-success', __('Sponsor added'));
         return redirect()->route('groups.settings.sponsors', ['group' => $group->slug]);
-    } 
+    }
 
     /**
      * Display create sponsor page of the group
@@ -95,13 +103,15 @@ class SponsorSettingsController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
      * @param  \App\Models\GroupSponsor $sponsor
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request, Group $group, GroupSponsor $sponsor)
     {
         // Authorize user
-        if ($request->user()->cant('update_sponsor', $group)) {
+//        if ($request->user()->cant('update_sponsor', $group)) {
+        $auth_user=Auth::user() ;
+        if (!$auth_user && !$auth_user->isOrganizerOf($group)) {
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
 
@@ -109,7 +119,7 @@ class SponsorSettingsController extends Controller
             'group' => $group,
             'sponsor' => $sponsor,
         ]);
-    } 
+    }
 
     /**
      * Update sponsor of the group
@@ -117,16 +127,19 @@ class SponsorSettingsController extends Controller
      * @param  \App\Http\Requests\Application\Group\Settings\Sponsor\Update $request
      * @param  \App\Models\Group $group
      * @param  \App\Models\GroupSponsor $sponsor
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Update $request, Group $group, GroupSponsor $sponsor)
     {
         // Authorize user
-        if ($request->user()->cant('update_sponsor', $group)) {
+//        if ($request->user()->cant('update_sponsor', $group)) {
+        $auth_user=Auth::user() ;
+        if (!$auth_user && !$auth_user->isOrganizerOf($group)) {
+
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
-        
+
         // Update the sponsor
         $sponsor->update($request->validated());
 
@@ -137,7 +150,7 @@ class SponsorSettingsController extends Controller
 
         session()->flash('alert-success', __('Sponsor updated'));
         return redirect()->route('groups.settings.sponsors', ['group' => $group->slug]);
-    } 
+    }
 
     /**
      * Delete sponsor of the group
@@ -145,20 +158,22 @@ class SponsorSettingsController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
      * @param  \App\Models\GroupSponsor $sponsor
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function delete(Request $request, Group $group, GroupSponsor $sponsor)
     {
         // Authorize user
-        if ($request->user()->cant('delete_sponsor', $group)) {
+//        if ($request->user()->cant('delete_sponsor', $group)) {
+        $auth_user=Auth::user() ;
+        if (!$auth_user && !$auth_user->isOrganizerOf($group)) {
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
 
         // Delete sponsor
         $sponsor->delete();
-        
+
         session()->flash('alert-success', __('Sponsor deleted'));
         return redirect()->route('groups.settings.sponsors', ['group' => $group->slug]);
-    } 
+    }
 }

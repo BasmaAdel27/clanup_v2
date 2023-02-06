@@ -165,4 +165,13 @@ class GeneralSettingsController extends Controller
         session()->flash('alert-success', __('Settings updated'));
         return redirect()->route('account.settings.general');
     }
+
+    // Verify Email
+    public function verify_email()
+    {
+        $user = auth()->user();
+        $user->sendEmailVerificationNotification();
+        session()->flash('alert-success', __('Verification email sent'));
+        return redirect()->route('account.settings.general');
+    }
 }

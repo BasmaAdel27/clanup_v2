@@ -8,7 +8,7 @@ class Country extends Model
 {
     /**
      * Define Relation with Address Model
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function address()
@@ -18,10 +18,18 @@ class Country extends Model
 
     /**
      * List Countries for Select2 Javascript Library
-     * 
+     *
      * @return collect
      */
     public static function getSelect2Array() {
         return self::select('id', 'name AS text')->get();
+    }
+
+
+    ///////////////////////////
+
+    public function states()
+    {
+        return $this->hasMany(State::class);
     }
 }

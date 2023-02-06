@@ -8,6 +8,7 @@ use App\Traits\HasMembership;
 use App\Traits\HasSubscription;
 use App\Traits\HasTopics;
 use Carbon\Carbon;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 use Lab404\Impersonate\Models\Impersonate;
@@ -16,7 +17,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class User extends Authenticatable implements HasMedia
+class User extends Authenticatable implements MustVerifyEmail , HasMedia
 {
     use Notifiable;
     use HasAddresses;
@@ -60,6 +61,10 @@ class User extends Authenticatable implements HasMedia
     /**
      * @return bool
      */
+
+    public function messages(){
+        return $this->hasMany(Message::class);
+    }
     public function canBeImpersonated()
     {
         return !$this->isAdmin();
@@ -75,7 +80,7 @@ class User extends Authenticatable implements HasMedia
 
     /**
      * Returns all the saved events.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function saves()
@@ -85,7 +90,7 @@ class User extends Authenticatable implements HasMedia
 
     /**
      * Returns all the RSVP of this user.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function rsvp()
@@ -95,7 +100,7 @@ class User extends Authenticatable implements HasMedia
 
     /**
      * Returns all the Discussions of this user.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function discussions()
@@ -112,12 +117,12 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(UserSetting::class);
     }
-    
+
     /**
      * Get User Specified setting
      *
      * @param string $key
-     * 
+     *
      * @return mixed
      */
     public function getSetting($key)
@@ -132,7 +137,7 @@ class User extends Authenticatable implements HasMedia
      *
      * @param string $key
      * @param string $value
-     * 
+     *
      * @return void
      */
     public function setSetting($key, $value)
@@ -145,7 +150,7 @@ class User extends Authenticatable implements HasMedia
      * Set Multiple User Specified setting
      *
      * @param array $array
-     * 
+     *
      * @return void
      */
     public function setSettings($array)
@@ -196,7 +201,7 @@ class User extends Authenticatable implements HasMedia
 
     /**
      * Get Full Name Attribute
-     * 
+     *
      * @return string
      */
     public function getFullNameAttribute()
@@ -206,7 +211,7 @@ class User extends Authenticatable implements HasMedia
 
     /**
      * Return Default User Avatar Url
-     * 
+     *
      * @return string (url)
      */
     public function getDefaultAvatar()
@@ -216,18 +221,18 @@ class User extends Authenticatable implements HasMedia
 
     /**
      * Get the avatar attribute
-     * 
+     *
      * @return url
      */
     public function getAvatarAttribute()
     {
         $last_media = $this->getMedia()->last();
         return  $last_media ? $last_media->getFullUrl() : $this->getDefaultAvatar();
-    } 
+    }
 
     /**
      * Get Birthdate Attribute
-     * 
+     *
      * @return string
      */
     public function getBirthdateAttribute()
@@ -238,7 +243,7 @@ class User extends Authenticatable implements HasMedia
 
     /**
      * Get User's Locale
-     * 
+     *
      * @return string (url)
      */
     public function getLocaleAttribute()

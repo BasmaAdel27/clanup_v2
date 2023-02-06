@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Application\Group\Settings\ContentVisibility\Update;
 use App\Models\Group;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ContentVisibilitySettingsController extends Controller
 {
@@ -14,16 +15,18 @@ class ContentVisibilitySettingsController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request, Group $group)
     {
         // Authorize user
-        if ($request->user()->cant('update', $group)) {
+//        if ($request->user()->cant('update', $group)) {
+        $auth_user=Auth::user();
+        if (!Auth::user() && !$auth_user->isOrganizerOf($group)) {
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
-        
+
         return view('application.groups.settings.content_visibility', [
             'group' => $group,
         ]);
@@ -34,13 +37,15 @@ class ContentVisibilitySettingsController extends Controller
      *
      * @param  \App\Http\Requests\Application\Group\Settings\ContentVisibility\Update $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Update $request, Group $group)
     {
         // Authorize user
-        if ($request->user()->cant('update', $group)) {
+//        if ($request->user()->cant('update', $group)) {
+        $auth_user=Auth::user();
+        if (!Auth::user() && !$auth_user->isOrganizerOf($group)) {
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
 
@@ -53,5 +58,5 @@ class ContentVisibilitySettingsController extends Controller
 
         session()->flash('alert-success', __('Settings updated'));
         return redirect()->route('groups.settings.content_visibility', ['group' => $group->slug]);
-    } 
+    }
 }

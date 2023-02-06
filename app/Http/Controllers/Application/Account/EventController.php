@@ -11,9 +11,9 @@ class EventController extends Controller
 {
     /**
      * Display the My Events Page
-     * 
+     *
      * @param  \Illuminate\Http\Request $request
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -58,5 +58,20 @@ class EventController extends Controller
             'menu' => $menu,
             'tab' => $tab,
         ]);
+    }
+
+
+    public function suggested_events(Request $request){
+        $user=$request->user();
+        $limit=10;
+        $joined_group_ids = $user->groups()->pluck('group_id')->toArray();
+        $events_attending=Event::userAttending($user)->pluck('group_id')->toArray();
+        $organized_group_ids = $user->groups(GroupMembership::EVENT_ORGANIZER)->pluck('group_id')->toArray();
+        $events=Event::whereHas('group',function ($q){
+            $q->where('group_type',0);
+        })->whereNotIn('group_id', $organized_group_ids)->
+        whereNotIn('group_id', $joined_group_ids)->whereNotIn('group_id',$events_attending)->upcoming()->paginate($limit);
+
+        return view('application.account.all_suggestedEvents',['events'=>$events]);
     }
 }

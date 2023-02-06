@@ -46,7 +46,6 @@ class EventController extends Controller
             ->orderBy('id', 'desc')
             ->paginate()
             ->appends(request()->query());
-
         return view('admin.events.index', [
             'events' => $events
         ]);

@@ -99,9 +99,10 @@
                             <br>
                             <small class="form-text">{{  __('At least 1200 x 675 pixels') }}</small>
                         </div>
-                    </label> 
-                    @error('event.featured_photo_file')<small class="form-text text-danger ps-1">{{ str_replace('.', ' ', $message) }}</small>@enderror
+                    </label>
                 </div>
+                @error('event.featured_photo_file')<small class="form-text text-danger ps-1">{{ str_replace('.', ' ', $message) }}</small>@enderror
+
 
                 <!-- Event Description -->
                 <div class="form-group mb-4">
@@ -136,9 +137,9 @@
                         <label class="form-label">{{  __('Location') }}</label>
                         <div class="input-icon mb-3 place_autocomplete_container">
                             <span class="input-icon-addon">
-                                <i class="fa fa-map-pin"></i> 
+                                <i class="fa fa-map-pin"></i>
                             </span>
-                            <input id="place_autocomplete" class="form-control place_autocomplete @error('event.address.name') is-invalid @enderror" autocomplete="off" placeholder="{{  __('Location') }}" type="text" name="location_name" wire:model="event.address.name" wire:ignore>
+                            <input id="place_autocomplete" class="form-control place_autocomplete @error('event.address.name') is-invalid @enderror" autocomplete="on" placeholder="{{  __('Location') }}" type="text" name="location_name" wire:model="event.address.name" wire:ignore>
                             <input type="hidden" name="place" id="place" wire:model="event.address.location_name">
                             <input type="hidden" name="address_1" id="formatted_address" wire:model="event.address.address_1">
                             <input type="hidden" name="lat" id="lat" wire:model="event.address.lat">
@@ -149,7 +150,7 @@
                             <input type="hidden" name="postal_code" id="postal_code" wire:model="event.address.zip">
                         </div>
                         @error('event.address.name')
-                            <small class="form-text text-danger ps-1">{{ __('The event address is required') }}</small>
+                        <small class="form-text text-danger ps-1">{{ __('The event address is required') }}</small>
                         @enderror
                     </div>
 

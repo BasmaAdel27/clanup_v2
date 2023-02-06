@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -75,7 +76,7 @@ class LoginController extends Controller
     public function handleProviderCallback($provider)
     {
         $user = Socialite::driver($provider)->user();
-
+        
         // Check if there is an existing user with this provider
         if ($existed_user = User::where(['email' => $user->getEmail(), 'provider' => $provider, 'provider_id' => $user->getId()])->first()) {
             // Login user
@@ -90,17 +91,29 @@ class LoginController extends Controller
 
         // If no user found by email, create a new user
         $name_array = split_name($user->getName());
-        $user = User::create([
-            'first_name' => $name_array[0],
-            'last_name' => $name_array[1],
-            'email' => $user->getEmail(),
-            'provider_id' => $user->getId(),
+        if ($user->getEmail() == null){
+            $user = User::create([
+                'first_name' => $name_array[0],
+                'last_name' => $name_array[1],
+                'email' => $user->getId().'@facebook.com',
+                'provider_id' => $user->getId(),
+                ]);
+        }else{
+            $user = User::create([
+                'first_name' => $name_array[0],
+                'last_name' => $name_array[1],
+                'email' => $user->getEmail(),
+                'provider_id' => $user->getId(),
+            ]);
+        }
+        $user->update([
             'provider' => $provider,
-            'role' => 'user'
+            'role' => 'user',
+            'email_verified_at'=>now()
         ]);
 
-        // Set avatar 
-        $user->addMediaFromUrl($user->getAvatar())->toMediaCollection();
+        // Set avatar
+        $user->addMediaFromUrl($user->getDefaultAvatar())->toMediaCollection();
 
         // Login new user
         Auth::login($user);

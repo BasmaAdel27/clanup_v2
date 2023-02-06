@@ -19,7 +19,7 @@ function onPlaceChange() {
     if (!place.geometry || !place.geometry.location) {
         return;
     }
-    
+
     var place_name = inputElement.closest('.place_autocomplete_container').find('[name="place"]');
     if (place_name.length) {
         place_name.val(place.formatted_address);
@@ -71,7 +71,7 @@ function onPlaceChange() {
     if (inputElement.length) {
         inputElement.val(place.formatted_address).attr('data-value', place.formatted_address).blur();
         inputElement[0].dispatchEvent(new Event('input'));
-    } 
+    }
 }
 
 function initAutocomplete() {
@@ -89,10 +89,16 @@ function initAutocomplete() {
         autocomplete.addListener('place_changed', onPlaceChange);
         autocompletes.push(autocomplete);
 
-        google.maps.event.addDomListener(inputs[i], 'keydown', function(event) { 
-            if (event.keyCode === 13) { 
-                event.preventDefault(); 
+        // google.maps.event.addDomListener(inputs[i], 'keydown', function(event) {
+        //     if (event.keyCode === 13) {
+        //         event.preventDefault();
+        //     }
+        // });
+
+        inputs[i].addEventListener('keydown', function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
             }
-        }); 
+        });
     }
 }

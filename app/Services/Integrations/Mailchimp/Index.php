@@ -10,6 +10,7 @@ class Index
 {
     public function update_settings(Request $request, $group)
     {
+
         // Validate request
         $request->validate([
             'mailchimp_api_key' => 'required|string',
@@ -18,7 +19,7 @@ class Index
 
         // Check if the credentials are correct
         try {
-            $mailchimp = new Mailchimp($request->input('mailchimp_api_key'));
+            $mailchimp = new MailChimp($request->input('mailchimp_api_key'));
             $result = $mailchimp->get("/lists/$request->mailchimp_list_id");
             if (!isset($result['name'])) {
                 throw ValidationException::withMessages(['mailchimp_api_key' => __('Please check your credentials')]);
@@ -26,7 +27,7 @@ class Index
         } catch (\Throwable $th) {
             throw ValidationException::withMessages(['mailchimp_api_key' => __('Please check your credentials')]);
         }
-        
+
         // Update group settings
         $integration = Integration::where('slug', 'mailchimp')->first();
         $integration->setSetting('mailchimp_api_key', $request->input('mailchimp_api_key'), $group->id);
@@ -35,6 +36,7 @@ class Index
         // Check if the group is already synced with Mailchimp
         // If not sync current members with mailchimp
         $is_already_sync = $integration->getSetting('mailchimp_synced', $group->id);
+
         if (!$is_already_sync) {
             $result = $this->sync_members($group);
             if ($result) {

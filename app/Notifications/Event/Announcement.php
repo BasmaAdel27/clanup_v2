@@ -32,7 +32,7 @@ class Announcement extends Notification implements ShouldQueue
      */
     public function via()
     {
-        return ['mail', 'database'];
+        return ['mail','database'];
     }
 
     /**
@@ -49,7 +49,7 @@ class Announcement extends Notification implements ShouldQueue
                     ->greeting(__('Upcoming event: :event_title', ['event_title' => $this->event->title]))
                     ->line(
                         __('<strong>:event_title</strong> will starts at <strong>:starts_date</strong> and ends at <strong>:ends_date</strong>', [
-                            'event_title' => $this->event->title, 
+                            'event_title' => $this->event->title,
                             'starts_date' => convertToLocal($this->event->starts_at, 'M d, Y H:i', false, $user),
                             'ends_date' => convertToLocal($this->event->ends_at, 'M d, Y H:i', false, $user),
                         ])
@@ -68,6 +68,7 @@ class Announcement extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
+
         $user = User::find($notifiable->id) ?? null;
         return [
             'event_id' => $this->event->id,

@@ -34,10 +34,14 @@
                     <div class="list-group-item p-3">
                         <div class="row g-2 align-items-center">
                             <div class="col-auto">
-                                <img class="avatar rounded shadow-0 border" src="{{ $member->avatar }}" alt="{{ $member->full_name }}">
+                                <a href="{{ route('profile', $member->username) }}" class="avatar avatar-md rounded-circle border" style="background-image: url({{ $member->avatar }})" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $member->full_name }}"></a>
+{{--                                <img class="avatar rounded shadow-0 border" src="{{ $member->avatar }}" alt="{{ $member->full_name }}">--}}
                             </div>
                             <div class="col">
-                                <p class="mb-0 fw-bold">{{ $member->full_name }}</p>
+                                <div class="text-truncate">
+                                    <a href="{{ route('profile', $member->username) }}" class="text-body fw-bold text-decoration-none">{{ $member->full_name }}</a>
+                                </div>
+{{--                                <p class="mb-0 fw-bold">{{ $member->full_name }}</p>--}}
                                 <p class="mb-0 text-muted">{{ $member->getRoleOf($group) }} • <time class="fst-italic" datetime="{{ convertToLocal($member->pivot->created_at, 'U') }}">{{ __('Joined :date', ['date' => convertToLocal($member->pivot->created_at, 'jS F Y')]) }}</time></p>
                             </div>
                             <div class="col-auto lh-1">

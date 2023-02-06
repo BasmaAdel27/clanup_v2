@@ -43,15 +43,15 @@ class JoinGroup extends Component
         }
     }
 
-    public function unsubscribe_from_group() 
+    public function unsubscribe_from_group()
     {
         $user = auth()->user();
 
         // Detach membership
-        $user->unsubscribeFromGroup($this->group);    
+        $user->unsubscribeFromGroup($this->group);
     }
 
-    public function revert_candidate_request() 
+    public function revert_candidate_request()
     {
         $user = auth()->user();
         $user->revertJoinRequest($this->group);

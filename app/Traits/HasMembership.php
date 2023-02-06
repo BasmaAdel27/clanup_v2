@@ -17,6 +17,8 @@ trait HasMembership
     {
         return $this->hasMany(GroupMembership::class);
     }
+   
+
 
     /**
      * Returns all the groups this user owned.
@@ -139,7 +141,7 @@ trait HasMembership
 
     /**
      * Returns the role of the user for given $group
-     * 
+     *
      * @return string
      */
     public function getRoleOf(Group $group)
@@ -160,10 +162,10 @@ trait HasMembership
 
     /**
      * Returns the last visit date of the user for given $group
-     * 
+     *
      * @return string|null
      */
-    public function getLastVisitDateOf(Group $group) 
+    public function getLastVisitDateOf(Group $group)
     {
         return optional(
             Visit::where('user_id', $this->id)->where('group_id', $group->id)->orderBy('created_at', 'desc')->first()
@@ -172,29 +174,29 @@ trait HasMembership
 
     /**
      * Join user to given group
-     * 
+     *
      * @return GroupMembership
      */
     public function joinToGroup(Group $group)
     {
         if($this->hasAnyGivenRoles($group, [
-            GroupMembership::MEMBER, 
-            GroupMembership::BLACKLISTED, 
+            GroupMembership::MEMBER,
+            GroupMembership::BLACKLISTED,
             GroupMembership::CANDIDATE
         ])) return;
 
         return GroupMembership::updateOrCreate(
             ['user_id' => $this->id, 'group_id' => $group->id],
             ['membership' => (
-                $group->isOpen() 
-                && !$group->getSetting('new_members_need_approved') 
+                $group->isOpen()
+                && !$group->getSetting('new_members_need_approved')
             ) ? GroupMembership::MEMBER : GroupMembership::CANDIDATE]
         );
     }
 
     /**
      * Unsubscribe user to given group
-     * 
+     *
      * @return GroupMembership
      */
     public function unsubscribeFromGroup(Group $group)
@@ -209,7 +211,7 @@ trait HasMembership
 
     /**
      * Revert user join request to given group
-     * 
+     *
      * @return GroupMembership
      */
     public function revertJoinRequest(Group $group)

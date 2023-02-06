@@ -2,7 +2,7 @@
     <div class="{{ isset($admin) ? 'container' : 'container-fluid' }}">
         <div class="d-flex align-items-center">
             <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-                <a href="/">
+                <a href="/home">
                     <img src="{{ asset(get_system_setting('application_logo')) }}" alt="{{ $application_name }}" width="110" height="32" class="navbar-brand-image">
                 </a>
             </h1>
@@ -31,7 +31,7 @@
                             @foreach ($notifications as $notification)
                                 @include('application.components.notification-item', ['notification' => $notification])
                             @endforeach
-    
+
                             <div class="d-none">
                                 {{ $notifications->links() }}
                             </div>

@@ -1,7 +1,7 @@
 @extends('layouts.admin', ['page' => 'events'])
 
 @section('title', __('Events'))
-    
+
 @section('content')
     <div class="container">
         <div class="page-header d-print-none">
@@ -39,8 +39,8 @@
                                         <th>{{ __('Group') }}</th>
                                         <th>{{ __('Status') }}</th>
                                         <th class="text-end">{{ __('Actions') }}</th>
-                                    </tr> 
-                                </thead> 
+                                    </tr>
+                                </thead>
                                 <tbody class="list" id="events">
                                     @foreach ($events as $event)
                                         <tr>
@@ -82,8 +82,8 @@
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </a>
                                                     <div class="dropdown-menu dropdown-menu-end">
-                                                        @if ($event->group->id)
-                                                            <a class="dropdown-item" href="{{ route('impersonate', optional($event->group->organizer)->id) }}">
+                                                        @if (optional($event->group->organizer)->id)
+                                                            <a class="dropdown-item" href="{{ route('impersonate', optional($event->group->organizer)->id)}}">
                                                                 {{ __('Login & Manage') }}
                                                             </a>
                                                         @endif

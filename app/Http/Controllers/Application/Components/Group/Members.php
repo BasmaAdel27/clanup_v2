@@ -16,7 +16,7 @@ class Members extends Component
     public $search;
 
     protected $queryString = [
-        'tab' => ['except' => 'all'], 
+        'tab' => ['except' => 'all'],
     ];
 
     public function mount()

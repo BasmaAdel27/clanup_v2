@@ -14,7 +14,7 @@ class Form extends Component
 
     // Default Step
     public $step = 'location';
-    
+
     // Location
     public $location_name;
     public $place_name;
@@ -35,11 +35,13 @@ class Form extends Component
     // Group name & describe
     public $group_name;
     public $group_describe;
+    public $group_status;
 
     protected $rules = [
         'location_name' => 'required|max:255',
         'group_name' => 'required|max:120',
         'group_describe' => 'required|max:5000',
+        'group_status'=>'required'
     ];
 
     public function mount()
@@ -80,9 +82,13 @@ class Form extends Component
             case 'name':
                 $this->step = 'topics';
                 break;
-            case 'describe':
+            case 'status':
                 $this->step = 'name';
                 break;
+            case 'describe':
+                $this->step = 'status';
+                break;
+
         }
     }
 
@@ -98,10 +104,16 @@ class Form extends Component
                 break;
             case 'name':
                 $this->validateOnly('group_name');
+                $this->step = 'status';
+                break;
+            case 'status':
+                $this->validateOnly('group_status');
                 $this->step = 'describe';
                 break;
+
         }
     }
+
 
     public function store() {
         // Validate description
@@ -111,7 +123,8 @@ class Form extends Component
         $user = auth()->user();
 
         // Authorize user
-        if ($user->cant('create', Group::class) || config('app.is_demo')) {
+//        if ($user->cant('create', Group::class) || config('app.is_demo')) {
+        if (!$user) {
             session()->flash('alert-danger', __('Action Blocked in demo'));
             return redirect()->route('start.create');
         }
@@ -121,12 +134,23 @@ class Form extends Component
             'name' => $this->group_name,
             'describe' => clean($this->group_describe),
             'created_by' => $user->id,
-            'group_type' => Group::OPEN,
+
         ]);
+        if ($this->group_status=='public'){
+            $group->update([
+                'group_type' => Group::OPEN,
+
+            ]);
+        }else{
+            $group->update([
+                'group_type' => Group::CLOSED,
+
+            ]);
+        }
 
         // Attach membership
         $group->memberships()->create([
-            'user_id' => $user->id, 
+            'user_id' => $user->id,
             'membership' => GroupMembership::ORGANIZER,
         ]);
 
@@ -152,7 +176,7 @@ class Form extends Component
     {
         if ($this->search) {
             $this->recommended_interests = Topic::where('name', 'like', '%'.$this->search.'%')->get()->take(10);
-        } 
+        }
 
         return view('application.components.group.start.form');
     }

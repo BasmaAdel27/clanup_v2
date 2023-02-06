@@ -10,7 +10,7 @@
                 <div class="col-lg-6 text-center text-lg-start">
                     <p class="text-secondary">{{ __('BECOME AN ORGANIZER') }}</p>
                     <h1>{{ __("We'll walk you through a few steps to build your local community") }}</h1>
-                    <a class="btn btn-orange" href="{{ route('checkout.plans') }}">{{ __('Get started') }}</a>
+                    <a class="btn btn-orange" href="{{ route('start.create') }}">{{ __('Get started') }}</a>
                 </div>
             </div>
         </div>
@@ -101,7 +101,7 @@
                         </li>
                     </ul>
                 </div>
- 
+
                 <div class="col-lg-6">
                     <p class="h2 text-white mb-2">{{ __('Starting at:') }}</p>
                     @if ($most_cheap_plan)
@@ -134,7 +134,7 @@
     </section>
 
     @if (count($organizer_help_blogs) > 0)
-        <section class="py-5"> 
+        <section class="py-5">
             <div class="container">
                 <h2 class="text-center">{{ __('We\'re here to help') }}</h2>
                 <p class="text-center mb-4">{{ __('The :app_name Organizer Guide will help you learn how to build a successful community.', ['app_name' => $application_name]) }}</p>

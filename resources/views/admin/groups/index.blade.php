@@ -1,8 +1,9 @@
 @extends('layouts.admin', ['page' => 'groups'])
 
 @section('title', __('Groups'))
-    
+
 @section('content')
+
     <div class="container">
         <div class="page-header d-print-none">
             <div class="row align-items-center">
@@ -40,8 +41,8 @@
                                         <th>{{ __('Status') }}</th>
                                         <th>{{ __('Created at') }}</th>
                                         <th class="text-end">{{ __('Actions') }}</th>
-                                    </tr> 
-                                </thead> 
+                                    </tr>
+                                </thead>
                                 <tbody class="list" id="groups">
                                     @foreach ($groups as $group)
                                         <tr>
@@ -78,7 +79,7 @@
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </a>
                                                     <div class="dropdown-menu dropdown-menu-end">
-                                                        @if (optional($group->createdBy)->id)
+                                                        @if ($group->createdBy->id != auth()->id())
                                                             <a class="dropdown-item" href="{{ route('impersonate', optional($group->createdBy)->id) }}">
                                                                 {{ __('Login & Manage') }}
                                                             </a>

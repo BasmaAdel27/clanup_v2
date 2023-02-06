@@ -67,7 +67,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Automatically cast attributes to given types
-     * 
+     *
      * @var array
      */
     protected $casts = [
@@ -79,7 +79,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Automatically cast attributes to given types
-     * 
+     *
      * @var array
      */
     protected $dates = [
@@ -127,7 +127,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Returns the group of this event.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function group()
@@ -137,17 +137,22 @@ class Event extends Model implements HasMedia
 
     /**
      * Returns all the RSVP of this event.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function rsvp()
     {
         return $this->hasMany(EventRSVP::class);
     }
-
+    public function attends()
+    {
+        return $this->belongsToMany(User::class, 'event_rsvp')
+            ->withTimestamps()
+            ->withPivot('response');;
+    }
     /**
      * Returns all the Saves of this event.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function saves()
@@ -157,7 +162,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Returns the currency of the event fee.
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function currency()
@@ -237,7 +242,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Return Default Image Url
-     * 
+     *
      * @return url
      */
     public function getDefaultImage()
@@ -250,14 +255,14 @@ class Event extends Model implements HasMedia
 
     /**
      * Get the image attribute
-     * 
+     *
      * @return url
      */
     public function getImageAttribute()
     {
         $last_media = $this->getMedia()->last();
         return  $last_media ? $last_media->getFullUrl() : $this->getDefaultImage();
-    } 
+    }
 
     /**
      * Returns true if the event is draft
@@ -337,14 +342,14 @@ class Event extends Model implements HasMedia
                     ->address($this->is_online ? __('Online Event') : $this->address->address_1)
                     ->addressName($this->is_online ? __('Online Event') : $this->address->name);
             });
-        $calendar->appendProperty(TextPropertyType::create('METHOD', 'REQUEST')); 
+        $calendar->appendProperty(TextPropertyType::create('METHOD', 'REQUEST'));
 
         return $calendar->get();
     }
 
     /**
      * Send reminder to attendees
-     * 
+     *
      * @return void
      */
     public function sendReminderToAttendees()
@@ -358,7 +363,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Send reminder to group members
-     * 
+     *
      * @return void
      */
     public function sendAnnouncmentToMembers()
@@ -371,7 +376,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to filter events by parameters
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Carbon\Carbon                        $starts_at
      * @param \Carbon\Carbon                        $ends_at
@@ -381,11 +386,13 @@ class Event extends Model implements HasMedia
      * @param int                                   $radius
      * @param int                                   $category
      * @param int                                   $topic
+     * @param string                                   $place
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeFilter($query, $search, $starts_at, $ends_at, $type, $lat, $lng, $radius, $category, $topic)
+    public function scopeFilter($query, $search, $starts_at, $ends_at, $type, $place, $radius, $category, $topic)
     {
+
         // Filter by search param
         if ($search) $query = $query->search($search);
 
@@ -399,13 +406,20 @@ class Event extends Model implements HasMedia
         else if ($type == 2) $query = $query->where('is_online', 1); // in-person only
 
         // Filter by distance
-        if ($lat && $lng) $query = $query->distance($lat, $lng, $radius);
+//        if ($lat && $lng) $query = $query->distance($lat, $lng, $radius);
+        if ($place)
+            $data=explode(',',$place);
+            $query= $query->whereHas('addresses', function($q) use ($place,$data){
+
+                    $q->where('name', 'like', '%' . $place . '%')->orwhere('city', 'like', '%' . $data[0] . '%');
+
+        });
 
         // Filter by category
         if ($category) {
             $topics_ids = Topic::where('topic_category_id', $category)->pluck('id')->toArray();
             if ($topics_ids && !empty($topics_ids)) {
-                $query = $query->whereHas('group', function($q) use ($topics_ids) { 
+                $query = $query->whereHas('group', function($q) use ($topics_ids) {
                     $q->withAnyTopics($topics_ids);
                 });
             }
@@ -413,7 +427,7 @@ class Event extends Model implements HasMedia
 
         // Filter by topic
         if ($topic) {
-            $query = $query->whereHas('group', function($q) use ($topic) { 
+            $query = $query->whereHas('group', function($q) use ($topic) {
                 $q->withAllTopics($topic);
             });
         }
@@ -441,24 +455,24 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include events in given location and distance
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param float                                 $lat
      * @param float                                 $lng
      * @param int                                   $radius
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeDistance($query, $lat, $lng, $radius = 5)
     {
-        return $query->whereHas('addresses', function($q) use ($lat, $lng, $radius) { 
+        return $query->whereHas('addresses', function($q) use ($lat, $lng, $radius) {
             $q->isWithinMaxDistance($lat, $lng, $radius);
         });
     }
 
     /**
      * Scope a query to only include draft events.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -470,7 +484,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include published events.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -482,7 +496,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include events starting from given date
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Carbon\Carbon                        $starts_at
      *
@@ -495,7 +509,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include events ends to given date
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Carbon\Carbon                        $ends_at
      *
@@ -508,7 +522,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include events starts at given date
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Carbon\Carbon                        $starts_at
      *
@@ -521,7 +535,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include past events.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -533,7 +547,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include upcoming events.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -545,7 +559,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include cancelled events.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -557,7 +571,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include not cancelled events.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -569,7 +583,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include online events.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
@@ -581,7 +595,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include attending events of given user.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \App\Models\User                      $user
      *
@@ -596,7 +610,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include attendings.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \App\Models\User                      $user
      *
@@ -609,7 +623,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include not attendings.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \App\Models\User                      $user
      *
@@ -622,7 +636,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to only include saved events of given user.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \App\Models\User                      $user
      *
@@ -637,7 +651,7 @@ class Event extends Model implements HasMedia
 
     /**
      * Scope a query to search of group.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \App\Models\User                      $user
      *
@@ -649,4 +663,5 @@ class Event extends Model implements HasMedia
             $query->search($search);
         });
     }
+
 }

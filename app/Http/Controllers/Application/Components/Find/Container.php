@@ -28,18 +28,19 @@ class Container extends Component
 
     // Define query parameters
     protected $queryString = [
-        'source', 
-        'search' => ['except' => ''], 
-        'place' => ['except' => ''], 
-        'lat' => ['except' => ''], 
-        'lng' => ['except' => ''], 
+        'source',
+        'search' => ['except' => ''],
+        'place' => ['except' => ''],
+        'lat' => ['except' => ''],
+        'lng' => ['except' => ''],
         'type' => ['except' => 0],
-        'distance' => ['except' => 1000], 
-        'from' => ['except' => ''], 
+        'distance' => ['except' => 1000],
+        'from' => ['except' => ''],
         'to' => ['except' => ''],
         'category' => ['except' => 0],
         'topic' => ['except' => 0]
     ];
+
 
     public function mount()
     {
@@ -83,13 +84,21 @@ class Container extends Component
     public function render()
     {
         if ($this->source == 'EVENTS') {
-            $data = Event::upcoming()->published()->filter($this->search, $this->from, $this->to, $this->type, $this->lat, $this->lng, $this->distance, $this->category, $this->topic);
+            $data = Event::upcoming()->published()->filter($this->search, $this->from, $this->to, $this->type, $this->place, $this->distance, $this->category, $this->topic);
+            $allData=$data->take($this->limit)->get();
+            $markers=$allData->map(function ($item, $key){
+           return [$item->getAddressAttribute()->lat,$item->getAddressAttribute()->lng];
+       });
+            $this->dispatchBrowserEvent('contentChanged',['data' => $data->take($this->limit)->get(),'markers'=>$markers]);
         } else if ($this->source == 'GROUPS') {
-            $data = Group::filter($this->search, $this->lat, $this->lng, $this->distance, $this->category, $this->topic);
+            $data = Group::filter($this->search, $this->place, $this->category, $this->topic);
+            $allData=$data->take($this->limit)->get();
+            $markers=$allData->map(function ($item, $key) {
+                return [$item->getAddressAttribute()->lat, $item->getAddressAttribute()->lng];
+            });
         }
-
         $this->count = $data->count();
 
-        return view('application.components.find.container', ['data' => $data->take($this->limit)->get()]);
+        return view('application.components.find.container', ['data' => $data->take($this->limit)->get(),'markers'=>$markers]);
     }
 }

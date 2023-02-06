@@ -12,8 +12,8 @@ class Address extends Model
      * @var array
      */
     protected $fillable = [
-        'model', 
-        'role', 
+        'model',
+        'role',
         'name',
         'address_1',
         'address_2',
@@ -28,7 +28,7 @@ class Address extends Model
 
     /**
      * Automatically cast attributes to given types
-     * 
+     *
      * @var array
      */
     protected $casts = [
@@ -38,7 +38,7 @@ class Address extends Model
 
     /**
      * Automatically cast attributes to given types
-     * 
+     *
      * @var array
      */
     protected $hidden = [
@@ -49,7 +49,7 @@ class Address extends Model
 
     /**
      * Define Relation with Addressable Model
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function model()
@@ -59,7 +59,7 @@ class Address extends Model
 
     /**
      * Define Relation with Country Model
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function country()
@@ -81,22 +81,33 @@ class Address extends Model
 
     /**
      * Scope a query to only include nearby addresses.
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeIsWithinMaxDistance($query, $latitude, $longitude, $radius = 5) {
 
-        $haversine = "(6371 * acos(cos(radians(" . $latitude . ")) 
-                        * cos(radians(`lat`)) 
-                        * cos(radians(`lng`) 
-                        - radians(" . $longitude . ")) 
-                        + sin(radians(" . $latitude . ")) 
+        $haversine = "(6371 * acos(cos(radians(" . $latitude . "))
+                        * cos(radians(`lat`))
+                        * cos(radians(`lng`)
+                        - radians(" . $longitude . "))
+                        + sin(radians(" . $latitude . "))
                         * sin(radians(`lat`))))";
-    
+
         return $query->select('id', 'model_type', 'model_id')
                      ->selectRaw("{$haversine} AS distance")
                      ->whereRaw("{$haversine} < ?", [$radius]);
+    }
+
+    ////////////////////////////
+    public function state()
+    {
+        return $this->belongsTo(State::class);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
     }
 }

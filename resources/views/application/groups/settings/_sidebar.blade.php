@@ -15,6 +15,9 @@
             <a class="nav-link text-nowrap @if($page == 'members') text-primary fw-bold @endif" href="{{ route('groups.settings.members', ['group' => $group->slug]) }}">
                 {{ __('New member settings') }}
             </a>
+            <a class="nav-link text-nowrap @if($page == 'addMembers') text-primary fw-bold @endif" href="{{ route('groups.settings.addMembers', ['group' => $group->slug]) }}">
+                {{ __('Add members') }}
+            </a>
             <a class="nav-link text-nowrap @if($page == 'topics') text-primary fw-bold @endif" href="{{ route('groups.settings.topics', ['group' => $group->slug]) }}">
                 {{ __('Topics') }}
             </a>

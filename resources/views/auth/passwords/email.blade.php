@@ -22,7 +22,7 @@
                 <label class="form-label" for="email">{{ __('Email') }}</label>
                 <input class="form-control" name="email" type="email" placeholder="name@address.com" value="{{ old('email') }}" required autofocus />
             </div>
-    
+
             <div class="form-footer">
                 <button class="btn btn-primary w-100" type="submit">{{ __('Send reset link') }}</button>
             </div>

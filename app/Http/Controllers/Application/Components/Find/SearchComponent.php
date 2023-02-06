@@ -14,11 +14,12 @@ class SearchComponent extends Component
 
     public function mount()
     {
+
         if (request()->has('search')) $this->search = request()->get('search');
         if (session('place')) $this->place = session('place');
         if (session('lat')) $this->lat = session('lat');
         if (session('lng')) $this->lng = session('lng');
-
+       
         // No session value then get current location
         if (!$this->lat || !$this->lng || !$this->place) {
             $position = get_current_location_by_ip(request()->ip());
@@ -30,6 +31,7 @@ class SearchComponent extends Component
 
             // Set session
             session([
+
                 'place' => $position->cityName . ', ' . $position->countryName,
                 'lat' => $position->latitude,
                 'lng' => $position->longitude
@@ -39,6 +41,7 @@ class SearchComponent extends Component
 
     public function updated($name)
     {
+
         if (in_array($name, ['place', 'lat', 'lng'])) {
             // Update session
             session([

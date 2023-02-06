@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class GroupMembership extends Model
 {
     use SoftDeletes;
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -20,7 +20,7 @@ class GroupMembership extends Model
         'membership',
         'notification_interval',
         'notifed_at',
-    ]; 
+    ];
 
     /**
      * The attributes that should be mutated to dates.
@@ -38,7 +38,7 @@ class GroupMembership extends Model
     const EVENT_ORGANIZER = 70; // event organizer
     const MEMBER = 20; // active member
     const CANDIDATE = 10; // member asked to be part of the group, but it has not been confirmed yet
-    const INVITED = 0;  // member invited by a group admin    
+    const INVITED = 0;  // member invited by a group admin
     const UNSUBSCRIBED = -10; // user left the group
     const DECLINED = -15;  // user did not accept an invitation
     const REMOVED = -20; // removed by admin for another reason
@@ -53,7 +53,9 @@ class GroupMembership extends Model
     {
         return $this->belongsTo(User::class)->withDefault();
     }
-
+    public function members(){
+        return $this->belongsToMany(User::class);
+    }
     /**
      * Returns the group of this membership.
      *
@@ -66,7 +68,7 @@ class GroupMembership extends Model
 
     /**
      * Returns the role name
-     * 
+     *
      * @return string
      */
     public function getRoleName()

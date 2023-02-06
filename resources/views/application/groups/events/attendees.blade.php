@@ -18,7 +18,7 @@
                         @include('application.components.visible-only-member')
                     </div>
                 </div>
-            </div> 
+            </div>
         @endcan
     </section>
 @endsection

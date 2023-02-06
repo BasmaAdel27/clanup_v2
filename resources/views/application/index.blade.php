@@ -4,6 +4,42 @@
 
 @section('content')
     <div class="container py-4">
+        @if ($auth_user)
+            <section>
+                <div class="row mb-3">
+                    <div class="col">
+                        <h3 class="h1">{{ __('Suggested Groups') }}</h3>
+                    </div>
+                    <div class="col-md-4 d-lg-flex align-items-center justify-content-end">
+                        <a class="btn btn-outline-primary" href="{{ route('suggested_groups') }}">
+                            {{ __('See all your groups') }}
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    @foreach ($suggested_groups as $group)
+                        <div class="col-12 col-lg-3">
+                            @include('application.groups._group_suggested', ['groups' => $group])
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+
+            <section>
+                <div class="row mb-3">
+                    <div class="col">
+                        <h3 class="h1">{{ __('Suggested Events') }}</h3>
+                    </div>
+                <div class="col-md-4 d-lg-flex align-items-center justify-content-end">
+                    <a class="btn btn-outline-primary" href="{{ route('suggested_events') }}">
+                        {{ __('See all your events') }}
+                    </a>
+                </div>
+                </div>
+
+                @include('application.groups.events._event_slider', ['events' => $suggested_events])
+            </section>
+            @endif
         @if ($auth_user and $auth_user->isOrganizerOfAnyGroup() && count($events_from_groups_you_organize) > 0)
             <section>
                 <div class="row mb-3">
@@ -42,22 +78,22 @@
                     @endforeach
                 </div>
             </section>
-        @endif 
+        @endif
 
         @if ($auth_user)
-            <section> 
+            <section>
                 <div class="row mb-3">
                     <div class="col">
                         <h3 class="h1">{{ __('You\'re attending') }}</h3>
                     </div>
                 </div>
-                
+
                 @include('application.groups.events._event_slider', ['events' => $events_attending])
             </section>
         @endif
 
         @if ($auth_user)
-            <section> 
+            <section>
                 <div class="row mb-3">
                     <div class="col">
                         <h3 class="h1">{{ __('Events from groups you\'ve joined') }}</h3>
@@ -98,7 +134,7 @@
         </section>
 
         @if (!$auth_user)
-            <section class="my-5"> 
+            <section class="my-5">
                 <div class="row d-flex justify-content-center mb-3">
                     <div class="col-12 col-md-8 text-center">
                         <h3 class="h1">{{ __('How :app_name works', ['app_name' => $application_name]) }}</h3>
@@ -132,7 +168,7 @@
         @endif
 
         @if (count($upcoming_online_events) > 4)
-            <section> 
+            <section>
                 <div class="row mb-3">
                     <div class="col-md-8">
                         <h2 class="h1">{{ __('Upcoming online events') }}</h2>
@@ -149,7 +185,7 @@
         @endif
 
         @if (count($blogs) > 0)
-            <section> 
+            <section>
                 <div class="row d-flex justify-content-center mb-3">
                     <div class="col-12 col-md-8 text-center">
                         <h2 class="h1">{{ __('Stories from :app_name', ['app_name' => $application_name]) }}</h2>

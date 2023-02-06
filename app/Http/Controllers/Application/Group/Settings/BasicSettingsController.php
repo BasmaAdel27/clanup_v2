@@ -7,6 +7,7 @@ use App\Http\Requests\Application\Group\Settings\Basic\Update;
 use App\Http\Requests\Application\Group\Settings\Basic\Delete;
 use Illuminate\Http\Request;
 use App\Models\Group;
+use Illuminate\Support\Facades\Auth;
 
 class BasicSettingsController extends Controller
 {
@@ -15,33 +16,37 @@ class BasicSettingsController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request, Group $group)
     {
         // Authorize user
-        if ($request->user()->cant('update', $group)) {
+//        if ($request->user()->cant('update', $group)) {
+        $auth_user=Auth::user();
+        if (!Auth::user() && !$auth_user->isOrganizerOf($group)) {
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
-        
+
         return view('application.groups.settings.basic', [
             'group' => $group,
         ]);
-    } 
+    }
 
     /**
      * Update basic settings page of the group
      *
      * @param  \App\Http\Requests\Application\Group\Settings\Basic\Update $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Update $request, Group $group)
     {
         // Authorize user
-        if ($request->user()->cant('update', $group)) {
+//        if ($request->user()->cant('update', $group)) {
+        $auth_user=Auth::user();
+        if (!Auth::user() && !$auth_user->isOrganizerOf($group)) {
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
 
@@ -69,40 +74,44 @@ class BasicSettingsController extends Controller
 
         session()->flash('alert-success', __('Settings updated'));
         return redirect()->route('groups.settings', ['group' => $group->slug]);
-    } 
+    }
 
     /**
      * Delete the group
      *
      * @param  \App\Http\Requests\Application\Group\Settings\Basic\Delete $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function delete_view(Request $request, Group $group)
     {
         // Authorize user
-        if ($request->user()->cant('delete', $group)) {
+//        if ($request->user()->cant('delete', $group)) {
+        $auth_user=Auth::user();
+        if (!Auth::user() && !$auth_user->isOrganizerOf($group)) {
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
 
         return view('application.groups.settings.delete', [
             'group' => $group,
         ]);
-    } 
+    }
 
     /**
      * Delete the group
      *
      * @param  \App\Http\Requests\Application\Group\Settings\Basic\Delete $request
      * @param  \App\Models\Group $group
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function delete(Delete $request, Group $group)
     {
         // Authorize user
-        if ($request->user()->cant('delete', $group)) {
+//        if ($request->user()->cant('delete', $group)) {
+        $auth_user=Auth::user();
+        if (!Auth::user() && !$auth_user->isOrganizerOf($group)) {
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
 
@@ -116,5 +125,5 @@ class BasicSettingsController extends Controller
 
         session()->flash('alert-success', __('Group deleted'));
         return redirect()->route('home');
-    } 
+    }
 }

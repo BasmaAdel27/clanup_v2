@@ -2,27 +2,28 @@
     @if ($auth_user and $auth_user->isMemberOf($group))
         <div class="d-inline-flex mt-3 mt-md-0">
             <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    @if ($auth_user->hasOrganizerRolesOf($group))
+                @if ($auth_user->hasOrganizerRolesOf($group))
+                <span class="btn btn-light " type="button" aria-haspopup="true" aria-expanded="false">
                         {{ __('You\'re a organizer') }}
+                </span>
                     @else
-                        {{ __('You\'re a member') }}
-                    @endif  
-                </button>
+                    <button class="btn btn-light " type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ __('You\'re a member') }}
+                    </button>
+                    @endif
                 <div class="dropdown-menu text-sm">
-                    @can('update', $group)
-                        <a class="dropdown-item" href="{{ route('groups.settings', $group->slug) }}">{{ __('Settings') }}</a>
-                    @endcan 
                     @if (!$auth_user->isOrganizerOf($group))
                         <a class="dropdown-item" href="#" wire:click="unsubscribe_from_group()">{{ __('Leave this group') }}</a>
-                    @endif  
+                    @endif
                 </div>
             </div>
             @if ($auth_user->hasOrganizerRolesOf($group))
+                <a class="btn btn-orange ms-2 text-nowrap" href="{{ route('groups.settings', $group->slug) }}">{{ __('Settings') }}</a>
+                <a href="{{ route('groups.settings.addMembers', ['group' => $group->slug]) }}" class="btn btn-orange ms-2 text-nowrap">{{ __('Add Members') }}</a>
                 <a href="{{ route('groups.events.create', ['group' => $group->slug]) }}" class="btn btn-orange ms-2 text-nowrap">{{ __('Schedule event') }}</a>
-            @endif 
+            @endif
         </div>
-    @else 
+    @else
         @if ($auth_user and $auth_user->isCandidateOf($group))
             <button class="btn btn-dark" wire:click="$set('show_modal', true)">{{ __('Waiting for approval') }}</button>
         @else
@@ -33,7 +34,7 @@
                 tabindex="-1"
                 role="dialog"
                 aria-labelledby="joinGroupModalLabel"
-                aria-hidden="true"> 
+                aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -53,7 +54,7 @@
                                     <button class="btn btn-danger" type="button" wire:click.prevent="revert_candidate_request()">{{ __('Cancel Request') }}</button>
                                 </div>
                             @endif
-                            
+
                             @if ($welcome_member)
                                 <p>{!! nl2br(e($group->getSetting('welcome_message'))) !!}</p>
                                 <button class="btn btn-primary float-end" type="button" wire:click.prevent="close_modal()">{{ __('Done!') }}</button>

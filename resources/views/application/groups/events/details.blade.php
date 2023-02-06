@@ -69,7 +69,7 @@
                         </div>
                         <div class="avatar-list mb-3">
                             @can('view', $event)
-                                @foreach ($attendees as $attendee) 
+                                @foreach ($attendees as $attendee)
                                     <img class="avatar avatar-md rounded-circle border" src="{{ $attendee->user->avatar }}" alt="{{ $attendee->user->full_name }}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ $attendee->user->full_name }}"/>
                                 @endforeach
                             @else
@@ -114,6 +114,9 @@
                                 <div class="dropdown-menu width-95">
                                     <a class="dropdown-item" href="{{ route('groups.events.attendees', ['group' => $group, 'event' => $event]) }}">
                                         <i class="far fa-user pe-2"></i> {{ __('Manage attendees') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('groups.events.addAttendees', ['group' => $group, 'event' => $event]) }}">
+                                        <i class="far fa-user pe-2"></i> {{ __('Add attendees') }}
                                     </a>
                                     @if (!$event->isCancelled())
                                         @if ($event->isRSVPOpen())

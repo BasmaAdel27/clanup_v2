@@ -8,7 +8,7 @@
                 </span>
                 <input class="form-control rounded-0 rounded-start" autocomplete="off" name="search" placeholder="{{ __('Search events') }}" value="{{ $search }}" type="search">
             </div>
-            @if (get_system_setting('google_places_api_key')) 
+            @if (get_system_setting('google_places_api_key'))
                 <div class="input-icon">
                     <span class="input-icon-addon">
                         <i class="fa fa-map-pin"></i>
@@ -36,7 +36,7 @@
                         </div>
                     </div>
                 </div>
-                @if (get_system_setting('google_places_api_key')) 
+                @if (get_system_setting('google_places_api_key'))
                     <div class="col">
                         <div class="form-group">
                             <div class="input-icon place_autocomplete_container">

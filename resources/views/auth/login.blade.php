@@ -46,8 +46,11 @@
             </div>
         </div>
 
-        @include('auth._login_with_providers')
+{{--        @include('auth._login_with_providers')--}}
     </form>
+
+    @include('auth._login_with_providers')
+
 
     <div class="text-center text-muted mt-3">
         {{ __('Don\'t have an account yet?') }} <a href="{{ route('register') }}" tabindex="-1">{{ __('Register') }}</a>

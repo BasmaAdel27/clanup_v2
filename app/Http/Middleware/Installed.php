@@ -19,19 +19,19 @@ class Installed
     {
         // If there is no subscription at all
         $route = $request->route()->getName();
-        if ($route && (str_contains($route, 'installer.') || str_contains($route, 'updater.'))) {
-            return $next($request);
-        }
+//        if ($route && (str_contains($route, 'installer.') || str_contains($route, 'updater.'))) {
+//            return $next($request);
+//        }
 
         // Check if the application is installed
-        if (!is_installed()) {
-            return redirect('/install');
-        } 
-
-        // Check if the application needs to upgrade
-        if (!$this->alreadyUpdated()) {
-            return redirect('/update');
-        }
+//        if (!is_installed()) {
+//            return redirect('/install');
+//        }
+//
+//        // Check if the application needs to upgrade
+//        if (!$this->alreadyUpdated()) {
+//            return redirect('/update');
+//        }
 
         return $next($request);
     }
