@@ -84,17 +84,22 @@ class Container extends Component
     public function render()
     {
         if ($this->source == 'EVENTS') {
+
             $data = Event::upcoming()->published()->filter($this->search, $this->from, $this->to, $this->type, $this->place, $this->distance, $this->category, $this->topic);
             $allData=$data->take($this->limit)->get();
             $markers=$allData->map(function ($item, $key){
-           return [$item->getAddressAttribute()->lat,$item->getAddressAttribute()->lng];
-       });
+                $url=env('APP_URL')."/g/".$item->group->slug."/events/".$item->uid;
+                return [$item->getAddressAttribute()->lat, $item->getAddressAttribute()->lng,
+                    $url];
+            });
             $this->dispatchBrowserEvent('contentChanged',['data' => $data->take($this->limit)->get(),'markers'=>$markers]);
         } else if ($this->source == 'GROUPS') {
             $data = Group::filter($this->search, $this->place, $this->category, $this->topic);
             $allData=$data->take($this->limit)->get();
             $markers=$allData->map(function ($item, $key) {
-                return [$item->getAddressAttribute()->lat, $item->getAddressAttribute()->lng];
+                $url=env('APP_URL')."/g/".$item->group->slug."/events/".$item->uid;
+                return [$item->getAddressAttribute()->lat, $item->getAddressAttribute()->lng,
+                    $url];
             });
         }
         $this->count = $data->count();

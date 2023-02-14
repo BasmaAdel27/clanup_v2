@@ -26,6 +26,7 @@ class SearchComponent extends Component
 
             // Set component variables
             $this->place = $position->cityName . ', ' . $position->countryName;
+
             $this->lat = $position->latitude;
             $this->lng = $position->longitude;
 

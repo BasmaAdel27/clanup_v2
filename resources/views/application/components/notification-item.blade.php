@@ -108,6 +108,16 @@
                 $title = __('Your membership has been changed for :group_name', ['group_name' => $group->name]);
                 $link = route('groups.about', ['group' => $group->slug]);
                 break;
+                case 'App\Notifications\Mesages\sendMessage':
+                $message = \App\Models\Message::find($notification->data['message_id'] ?? 0);
+                if (!$message) {
+                    $skip = true;
+                    break;
+                }
+                $image = $message->group->avatar;
+                $title = __('you have new message in :group_name', ['group_name' => $message->group->slug]);
+                $link = route('groups.about', ['group' => $message->group->slug,'x' => $message->group->id]);
+                break;
             case 'App\Notifications\User\SubscriptionCancelled':
                 $image = $auth_user->avatar;
                 $title = __('Your :app_name subscription cancelled', ['app_name' => get_system_setting('application_name')]);

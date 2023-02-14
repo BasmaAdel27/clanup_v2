@@ -42,8 +42,15 @@ window.Echo = new Echo({
     broadcaster: 'pusher',
     key: Laravel.pusherKey,
     cluster: Laravel.pusherCluster,
-    encrypted: true
+    forceTLS: true,
+    encrypted: true,
+    authEndpoint: '/pusher/auth',
+    auth: {
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        }
+    }
 });
+// window.axios.defaults.headers.common['X-Socket-Id'] = window.Echo.socketId();
 
 
-window.axios.defaults.headers.common['X-Socket-Id'] = window.Echo.socketId();

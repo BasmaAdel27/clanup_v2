@@ -218,12 +218,14 @@
             for (i = 0; i < markers.length; i++) {
                 marker = new google.maps.Marker({
                     position: new google.maps.LatLng(markers[i][0], markers[i][1]),
+                    url:markers[i][2],
                     map: map
                 });
                 google.maps.event.addListener(marker, 'click', (function(marker, i) {
 
                     return function() {
-                        infowindow.setContent(markers[i][0]);
+                        infowindow.setContent(markers[i][2]);
+                        window.location.href=marker.url;
                         infowindow.open(map, marker);
                     }
 

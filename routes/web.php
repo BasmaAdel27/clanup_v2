@@ -47,7 +47,6 @@ Route::get('/robots.txt', 'SitemapController@robots')->name('robots');
 //-----------------------------------------//
 // Landing
 
-Route::get('/home', 'IndexController@index')->name('home');
 Route::get('/', 'IndexController@home')->name('index');
 Route::get('/demo', 'IndexController@demo')->name('demo');
 Route::get('/change-language/{locale}', 'IndexController@change_language')->name('change_language');
@@ -94,9 +93,14 @@ Route::post('/webhooks/paypal/{token?}', 'Application\Checkout\Paypal\WebhookCon
 Route::impersonate();
 Route::middleware(ProtectAgainstSpam::class)->group(function () {
     Auth::routes(['verify' => true]);
-    Route::get('/chat', [\App\Http\Controllers\Application\ChatsController::class,'index']);
-    Route::get('messages', [\App\Http\Controllers\Application\ChatsController::class,'fetchMessages']);
-    Route::post('messages', [\App\Http\Controllers\Application\ChatsController::class,'sendMessage']);
+    Route::get('messages/{group_id}', [\App\Http\Controllers\Application\ChatsController::class,'fetchMessages']);
+    Route::post('messages/{group_id}', [\App\Http\Controllers\Application\ChatsController::class,'sendMessage']);
+ Route::post('/pusher/auth', [\App\Http\Controllers\Application\ChatsController::class, 'pusherAuth'])
+->middleware('auth');
+    Route::get('groupMsg/{id}', [\App\Http\Controllers\Application\ChatsController::class,'getmsgs']);
+    Route::get('/isRead', [\App\Http\Controllers\Application\ChatsController::class,'isRead']);
+    Route::get('/home', 'IndexController@index')->name('home')->middleware('auth');
+
     Route::get('/auth/{provider}/redirect', 'Auth\LoginController@redirectToProvider')->name('social_login.redirect');
     Route::get('/auth/{provider}/callback', 'Auth\LoginController@handleProviderCallback')->name('social_login.callback');
     Route::get('/logout', 'Auth\LoginController@logout')->name('logout');

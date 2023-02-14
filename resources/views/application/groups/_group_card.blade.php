@@ -2,7 +2,7 @@
 
 <div wire:key="{{ time().$group->uid }}" class="row">
     <div class="col-12 col-md-2">
-        <a href="{{ route('groups.about', $group->slug) }}">
+        <a href="{{ route('groups.about', ['group'=>$group->slug,'x' => $group->id]) }}">
             <div class="img-wrap ratio-16-9">
                 <div class="img-content">
                     <img class="rounded-sm border" src="{{ $group->avatar }}" alt="{{ $group->name }}" />

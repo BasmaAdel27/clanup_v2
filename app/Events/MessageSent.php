@@ -3,6 +3,8 @@
 namespace App\Events;
 
 
+use App\Models\Group;
+use App\Models\GroupMembership;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
@@ -23,7 +25,6 @@ class MessageSent implements ShouldBroadcastNow
      *
      * @var User
      */
-    public $user;
 
     /**
      * Message details
@@ -31,18 +32,18 @@ class MessageSent implements ShouldBroadcastNow
      * @var Message
      */
     public $message;
+    public $user;
+    public $group;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Message $message,User $user )
+    public function __construct(Message $message,User $user)
     {
         $this->message = $message;
-
         $this->user = $user;
-        $this->dontBroadcastToCurrentUser();
 
     }
 
@@ -53,8 +54,9 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('chat');
+        return new PrivateChannel('groups.'.$this->message->group->id);
     }
+
 
 
 

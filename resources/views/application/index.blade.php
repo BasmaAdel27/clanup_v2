@@ -8,6 +8,20 @@
             <section>
                 <div class="row mb-3">
                     <div class="col">
+                        <h3 class="h1">{{ __('Suggested Events') }}</h3>
+                    </div>
+                    <div class="col-md-4 d-lg-flex align-items-center justify-content-end">
+                        <a class="btn btn-outline-primary" href="{{ route('suggested_events') }}">
+                            {{ __('See all your events') }}
+                        </a>
+                    </div>
+                </div>
+                @include('application.groups.events._event_slider', ['events' => $suggested_events])
+            </section>
+
+            <section>
+                <div class="row mb-3">
+                    <div class="col">
                         <h3 class="h1">{{ __('Suggested Groups') }}</h3>
                     </div>
                     <div class="col-md-4 d-lg-flex align-items-center justify-content-end">
@@ -25,20 +39,6 @@
                 </div>
             </section>
 
-            <section>
-                <div class="row mb-3">
-                    <div class="col">
-                        <h3 class="h1">{{ __('Suggested Events') }}</h3>
-                    </div>
-                <div class="col-md-4 d-lg-flex align-items-center justify-content-end">
-                    <a class="btn btn-outline-primary" href="{{ route('suggested_events') }}">
-                        {{ __('See all your events') }}
-                    </a>
-                </div>
-                </div>
-
-                @include('application.groups.events._event_slider', ['events' => $suggested_events])
-            </section>
             @endif
         @if ($auth_user and $auth_user->isOrganizerOfAnyGroup() && count($events_from_groups_you_organize) > 0)
             <section>
@@ -203,3 +203,130 @@
         @endif
     </div>
 @endsection
+@if(count($markers) > 0)
+@section('page_body_scripts')
+<script>
+    window.onload=function (){
+        initial();
+    }
+    function initial() {
+        // Show All Events in the Map with Marker
+        var eventLatLng = { lat: {{ $markers[0][0] }}, lng: {{ $markers[0][1] }} };
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 8,
+            center: eventLatLng,
+            styles: [
+                { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+                { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+                { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+                {
+                    featureType: "administrative.locality",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#d59563" }],
+                },
+                {
+                    featureType: "poi",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#d59563" }],
+                },
+                {
+                    featureType: "poi.park",
+                    elementType: "geometry",
+                    stylers: [{ color: "#263c3f" }],
+                },
+                {
+                    featureType: "poi.park",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#6b9a76" }],
+                },
+                {
+                    featureType: "road",
+                    elementType: "geometry",
+                    stylers: [{ color: "#38414e" }],
+                },
+                {
+                    featureType: "road",
+                    elementType: "geometry.stroke",
+                    stylers: [{ color: "#212a37" }],
+                },
+                {
+                    featureType: "road",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#9ca5b3" }],
+                },
+                {
+                    featureType: "road.highway",
+                    elementType: "geometry",
+                    stylers: [{ color: "#746855" }],
+                },
+                {
+                    featureType: "road.highway",
+                    elementType: "geometry.stroke",
+                    stylers: [{ color: "#1f2835" }],
+                },
+                {
+                    featureType: "road.highway",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#f3d19c" }],
+                },
+                {
+                    featureType: "transit",
+                    elementType: "geometry",
+                    stylers: [{ color: "#2f3948" }],
+                },
+                {
+                    featureType: "transit.station",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#d59563" }],
+                },
+                {
+                    featureType: "water",
+                    elementType: "geometry",
+                    stylers: [{ color: "#17263c" }],
+                },
+                {
+                    featureType: "water",
+                    elementType: "labels.text.fill",
+                    stylers: [{ color: "#515c6d" }],
+                },
+                {
+                    featureType: "water",
+                    elementType: "labels.text.stroke",
+                    stylers: [{ color: "#17263c" }],
+                },
+            ]
+
+        });
+
+        var marker1 = new google.maps.Marker({
+            position: eventLatLng,
+            map: map,
+        });
+        var markers=<?php print json_encode($markers) ?>;
+        var infowindow = new google.maps.InfoWindow();
+
+        var marker, i;
+        for (i = 0; i < markers.length; i++) {
+            marker = new google.maps.Marker({
+                position: new google.maps.LatLng(markers[i][0], markers[i][1]),
+                url:markers[i][2],
+                map: map
+            });
+            google.maps.event.addListener(marker, 'click', (function(marker, i) {
+
+                return function() {
+                    infowindow.setContent(markers[i][2]);
+                    window.location.href=marker.url
+                    infowindow.open(map, marker);
+                }
+
+            })(marker, i));
+
+        }
+        //
+
+    };
+</script>
+<script src="{{asset('assets/js/map.js')}}"></script>
+@endsection
+@endif

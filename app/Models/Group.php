@@ -56,6 +56,9 @@ class Group extends Model implements HasMedia
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
+    public function message(){
+        return $this->hasMany(Message::class);
+    }
     /**
      * Returns all the memberships of the group
      *
@@ -65,7 +68,15 @@ class Group extends Model implements HasMedia
     {
         return $this->hasMany(GroupMembership::class);
     }
+    public function hasUser($user_id)
+    {
 
+        foreach ($this->allmembers as $user) {
+            if($user->id == $user_id) {
+                return true;
+            }
+        }
+    }
 
     /**
      * Returns all the events of the group
@@ -209,6 +220,14 @@ class Group extends Model implements HasMedia
     public function members()
     {
         return $this->belongsToMany(User::class, 'group_memberships')
+            ->where('membership', '>=', GroupMembership::MEMBER)
+            ->withTimestamps()
+            ->withPivot('membership');
+    }
+    public function allmembers()
+    {
+        return $this->belongsToMany(User::class, 'group_memberships')
+            ->where('user_id','!=',auth()->id())
             ->where('membership', '>=', GroupMembership::MEMBER)
             ->withTimestamps()
             ->withPivot('membership');

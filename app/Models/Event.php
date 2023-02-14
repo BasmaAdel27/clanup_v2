@@ -8,6 +8,8 @@ use App\Traits\Sluggable;
 use App\Traits\UUIDTrait;
 use App\Traits\Visitable;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 use Illuminate\Database\Eloquent\Model;
@@ -387,6 +389,7 @@ class Event extends Model implements HasMedia
      * @param int                                   $category
      * @param int                                   $topic
      * @param string                                   $place
+
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -407,14 +410,13 @@ class Event extends Model implements HasMedia
 
         // Filter by distance
 //        if ($lat && $lng) $query = $query->distance($lat, $lng, $radius);
-        if ($place)
-            $data=explode(',',$place);
-            $query= $query->whereHas('addresses', function($q) use ($place,$data){
-
-                    $q->where('name', 'like', '%' . $place . '%')->orwhere('city', 'like', '%' . $data[0] . '%');
+        if ($place) $country =ltrim( array_values(array_slice(explode(',',$place), -1))[0]);
+        $state =ltrim(array_values(array_slice(explode(',',$place), -2))[0]);
+            $query= $query->with('addresses')->whereHas('addresses', function($q) use ($place,$state){
+                $q->where('name', 'like', '%' . $place . '%')->orwhere('state', 'like', '%' . $state. '%');
 
         });
-
+//
         // Filter by category
         if ($category) {
             $topics_ids = Topic::where('topic_category_id', $category)->pluck('id')->toArray();

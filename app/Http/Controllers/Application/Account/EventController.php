@@ -71,7 +71,12 @@ class EventController extends Controller
             $q->where('group_type',0);
         })->whereNotIn('group_id', $organized_group_ids)->
         whereNotIn('group_id', $joined_group_ids)->whereNotIn('group_id',$events_attending)->upcoming()->paginate($limit);
+        $markers=$events->map(function ($item, $key) {
+            $url=env('APP_URL')."/g/".$item->group->slug."/events/".$item->uid;
+            return [$item->getAddressAttribute()->lat, $item->getAddressAttribute()->lng,
+                $url];
+        });
 
-        return view('application.account.all_suggestedEvents',['events'=>$events]);
+        return view('application.account.all_suggestedEvents',['events'=>$events,'markers'=>$markers]);
     }
 }

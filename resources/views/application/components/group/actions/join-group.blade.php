@@ -16,6 +16,7 @@
                         <a class="dropdown-item" href="#" wire:click="unsubscribe_from_group()">{{ __('Leave this group') }}</a>
                     @endif
                 </div>
+
             </div>
             @if ($auth_user->hasOrganizerRolesOf($group))
                 <a class="btn btn-orange ms-2 text-nowrap" href="{{ route('groups.settings', $group->slug) }}">{{ __('Settings') }}</a>

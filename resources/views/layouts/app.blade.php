@@ -6,6 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @if (!Auth::guest())
+        <meta name="user-id" content="{{ Auth::user()->id }}" >
+    @endif
     @include('layouts._seo')
     @include('layouts._favicons')
     @include('layouts._css')
@@ -94,5 +97,61 @@
             });
         });
     </script>
+{{--    <script>--}}
+{{--        $('.group').click(function () {--}}
+{{--            $('.group').removeClass('active');--}}
+{{--            $(this).addClass('active');--}}
+{{--            group_id = $(this).attr('id');--}}
+
+{{--            $.ajax({--}}
+{{--                type: "get",--}}
+{{--                url: "/messages/"+ group_id,--}}
+{{--                data: "",--}}
+{{--                cache: false,--}}
+{{--                success: function (data) {--}}
+{{--                        console.log(data)--}}
+{{--                }--}}
+{{--            });--}}
+{{--        });--}}
+{{--    </script>--}}
+<script>
+    $('#notificationsDropdown').click(function () {
+        console.log(  $(this).find('.bellLight'))
+
+        $(this).find('.bg-danger').remove();
+        $.ajax({
+            type: "get",
+            url: "/isRead" ,
+            cache: false,
+            success: function (data) {
+                document.getElementById('notify').innerHTML='';
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        const pmbox = document.getElementById('datascroll')
+        const exampleModal=document.getElementById('exampleModal');
+        if (exampleModal) {
+            exampleModal.addEventListener('show.bs.modal', refreshScroll)
+        }
+
+        var objDiv = document.getElementById('datascroll')
+        objDiv.scrollTop = objDiv.scrollHeight
+        document.querySelector('#open').addEventListener('click', function (e) {
+            e.preventDefault()
+            setTimeout(() => {
+                refreshScroll()
+            }, 200);
+        })
+
+        function refreshScroll () {
+            var objDiv = document.getElementById('datascroll')
+            if (objDiv) objDiv.scrollTop = objDiv.scrollHeight
+        }
+    });
+</script>
+
 </body>
 </html>

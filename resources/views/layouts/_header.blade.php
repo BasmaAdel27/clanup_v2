@@ -13,21 +13,22 @@
         <div class="navbar-nav flex-row order-md-last">
             @if ($auth_user)
                 <a class="nav-item fw-bold text-decoration-underline me-3" href="{{ route('start.index') }}">{{ __('Start a group') }}</a>
-                <div class="dropdown nav-item me-3">
+                <div class="dropdown nav-item me-3 dropdown-messages">
                     @php
                         $notifications = $auth_user->notifications()->orderBy('read_at', 'asc')->orderBy('created_at', 'desc')->paginate(10);
+                        $messages = $auth_user->notifications()->where('type','App\Notifications\Mesages\sendMessage')->orderBy('read_at', 'asc')->orderBy('created_at', 'desc')->paginate(10);
                         $unread_count = $auth_user->unreadNotifications->count();
                     @endphp
                     <button class="position-relative bell-icon bg-light" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-bell"></i>
+                        <i class="fas fa-bell" data-count="0"></i>
                         @if ($unread_count)
-                            <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                            <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle bellLight">
                                 <span class="visually-hidden">{{ __('Unread notifications') }}</span>
                             </span>
                         @endif
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationsDropdown">
-                        <div class="scrolling-pagination">
+                        <div class="scrolling-pagination" id="messages-dropdown">
                             @foreach ($notifications as $notification)
                                 @include('application.components.notification-item', ['notification' => $notification])
                             @endforeach
@@ -37,7 +38,7 @@
                             </div>
                         </div>
                         @if (count($notifications) == 0)
-                            <div class="text-center">
+                            <div class="text-center " id="notify">
                                 <p>{{ __('No notifications yet.') }}</p>
                             </div>
                         @endif
@@ -83,3 +84,5 @@
         </div>
     </div>
 </header>
+
+
