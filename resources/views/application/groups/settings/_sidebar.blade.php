@@ -1,5 +1,5 @@
 <div class="col-12">
-    <a class="text-primary mb-0" href="{{ route('groups.about', ['group' => $group->slug]) }}">< {{ __('Back to group') }} </a>
+    <a class="text-primary mb-0" href="{{ route('groups.about', ['group' => $group->slug,'x'=>$group->id]) }}">< {{ __('Back to group') }} </a>
     <h2 class="h1 mb-4">{{ $group->name }}</h2>
 </div>
 

@@ -30,7 +30,7 @@ class Announcement extends Notification implements ShouldQueue
      *
      * @return array
      */
-    public function via()
+    public function via($notifiable)
     {
         return ['mail','database'];
     }
@@ -43,15 +43,16 @@ class Announcement extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $user = User::find($notifiable->id) ?? new User();
+        $user = User::find($notifiable->id) ?? null;
+
         return (new MailMessage)
                     ->subject(__('Upcoming event: :event_title', ['event_title' => $this->event->title]))
                     ->greeting(__('Upcoming event: :event_title', ['event_title' => $this->event->title]))
                     ->line(
                         __('<strong>:event_title</strong> will starts at <strong>:starts_date</strong> and ends at <strong>:ends_date</strong>', [
                             'event_title' => $this->event->title,
-                            'starts_date' => convertToLocal($this->event->starts_at, 'M d, Y H:i', false, $user),
-                            'ends_date' => convertToLocal($this->event->ends_at, 'M d, Y H:i', false, $user),
+                            'starts_date' => convertToLocal($this->event->starts_at),
+                            'ends_date' => convertToLocal($this->event->ends_at),
                         ])
                     )
                     ->action(__('See event details'), route('groups.events.show', ['group' => $this->event->group->slug, 'event' => $this->event->uid]))
@@ -69,7 +70,6 @@ class Announcement extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
 
-        $user = User::find($notifiable->id) ?? null;
         return [
             'event_id' => $this->event->id,
         ];

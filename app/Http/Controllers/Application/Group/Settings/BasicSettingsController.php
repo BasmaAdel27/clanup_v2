@@ -27,9 +27,10 @@ class BasicSettingsController extends Controller
         if (!Auth::user() && !$auth_user->isOrganizerOf($group)) {
             return redirect()->route('groups.about', ['group' => $group->slug]);
         }
-
+        $error='';
         return view('application.groups.settings.basic', [
             'group' => $group,
+            'error'=>$error
         ]);
     }
 

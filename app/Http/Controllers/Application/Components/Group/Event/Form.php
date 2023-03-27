@@ -112,7 +112,6 @@ class Form extends Component
                 'zip' => isset($address['zip']) ? $address['zip'] : null,
             ];
         }
-
         $event_array = [
             'group_id' => $this->group->id,
             'created_by' => $user->id,

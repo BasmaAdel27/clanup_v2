@@ -55,8 +55,11 @@ class GroupObserver
     public function updated(Group $group)
     {
         if($group->wasChanged('group_type') && $group->isClosed()){
-            $users = $group->members;
-            Notification::send($users, new ContentVisibilityChanged($group));
+            try {
+                $users = $group->members;
+                Notification::send($users, new ContentVisibilityChanged($group));
+            } catch (\Throwable $th) {}
+
         }
     }
 

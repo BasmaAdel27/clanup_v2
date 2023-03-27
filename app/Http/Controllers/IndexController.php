@@ -6,16 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Event;
 use App\Models\Group;
+use App\Models\User;
 use App\Models\GroupMembership;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
+
 
 class IndexController extends Controller
 {
 
     public function __construct()
     {
+        
         $this->middleware(['auth','verified'])->only(['index']);
     }
 
@@ -26,8 +30,8 @@ class IndexController extends Controller
      */
     public function index(Request $request)
     {
-
         $with = [];
+
 
         // Check if the user has logged in
         if ($user = $request->user()) {
@@ -86,7 +90,6 @@ class IndexController extends Controller
         $with['upcoming_online_events'] = Event::from(now()->startOfDay())->to(now()->endOfDay())->online()->notCancelled()->orderBy('starts_at')->take(8)->get();
         $with['topics'] = Topic::inRandomOrder()->limit(5)->get();
         $with['blogs'] = Blog::take(3)->latest()->get();
-
         return view('application.index', $with);
     }
 

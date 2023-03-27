@@ -53,8 +53,37 @@ class RegisterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  mixed  $user
      * @return mixed
+     * 
      */
+      public function showRegistrationForm()
+    {
+        $error='';
+        return view('auth.register',compact('error'));
+    }
+     
+        public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+        if(!$user){
+            $error='The email must be a valid email address';
+            return view('auth.register',compact('error'));
+        }
+
+        $this->guard()->login($user);
+
+        if ($response = $this->registered($request, $user)) {
+            
+            return $response;
+        }
+
+        return $request->wantsJson()
+                    ? new JsonResponse([], 201)
+                    : redirect($this->redirectPath());
+    }
     protected function registered(Request $request, $user)
+    
     {
         $user->update(['timezone' => $request->timezone ?? '']);
     }
@@ -70,7 +99,7 @@ class RegisterController extends Controller
         $validator = [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'confirmed', 'min:8'],
         ];
 
@@ -97,8 +126,13 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
             'role' => 'user'
         ]);
-        $user->sendEmailVerificationNotification();
-        return $user;
+        try {
+            $user->sendEmailVerificationNotification();
+            return $user;
+
+        }catch (\Throwable $th) {
+            $user->delete();
+        }
     }
 }
 

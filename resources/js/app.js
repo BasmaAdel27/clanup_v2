@@ -92,9 +92,14 @@ const app = new Vue({
     mounted(){
         //we get the group id in the url
         const url = window.location.href;
-        const group_Id = url.split("/").slice(-1)[0].slice(-2);
-        this.groupId = group_Id;
-
+        const group_Id = url.split("/").slice(-1)[0].split("=").slice(-1)[0];
+        // console.log(gro_Id);
+         if (Number(url.split("/").slice(-1)[0].split("?").slice(-1)[0].split('#')[0].split('=').slice(-1)[0])) {
+            this.groupId = url.split("/").slice(-1)[0].split("?").slice(-1)[0].split('#')[0].split('=').slice(-1)[0];
+        }
+        else{
+            this.groupId=group_Id;
+        }
             axios.get('/messages/'+this.groupId).then(res => {
                 res.data.map(message => {
                     // console.log(message)

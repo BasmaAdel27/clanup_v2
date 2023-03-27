@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Event;
 use App\Models\User;
+use App\Notifications\Event\Announcement;
 use App\Notifications\Event\DateTimeChanged;
 use App\Services\Notification\Notification;
 
@@ -22,5 +23,13 @@ class EventObserver
             $users = User::whereIn('id', $user_ids)->get();
             Notification::send($users, new DateTimeChanged($event));
         }
+       
+
+        if ($event->announced_at !=null){
+            $memberships=$event->group->allmembers;
+            // dd($memberships);
+            Notification::send($memberships,new Announcement($event));
+        }
+       
     }
 }

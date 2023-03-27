@@ -1,4 +1,4 @@
-@if (count($errors) > 0)
+@if (count($errors) > 0 ||  $error))
     <div class="alert alert-danger alert-dismissible mb-2" role="alert">
         <div class="d-flex">
             <div>
@@ -15,6 +15,9 @@
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
+                    @if($error)
+                    <li>{{$error}}</li>
+                    @endif
                 </ul>
             </div>
         </div>

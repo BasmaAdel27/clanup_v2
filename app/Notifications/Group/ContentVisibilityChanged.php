@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Group;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -28,9 +29,9 @@ class ContentVisibilityChanged extends Notification implements ShouldQueue
      *
      * @return array
      */
-    public function via()
+    public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['mail','database'];
     }
 
     /**
@@ -41,6 +42,8 @@ class ContentVisibilityChanged extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+        $user = User::find($notifiable->id) ?? null;
+
         return (new MailMessage)
                     ->subject(__(':group_name has been Closed Group', ['group_name' => $this->group->name]))
                     ->greeting(__(':group_name content visibility has been changed as closed.', ['group_name' => $this->group->name]))

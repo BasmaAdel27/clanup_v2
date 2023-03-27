@@ -60,10 +60,12 @@
 @push('page_body_scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data.js"></script>
+        <script src="assets/js/jquery.session.js"></script>
     <script>
         $(document).ready(function() {
             var timezone = moment.tz.guess();
             $('#timezone').val(timezone);
+              $.session.set("timezone",timezone);
         });
     </script>
 

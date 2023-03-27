@@ -79,7 +79,7 @@ class MembershipChanged extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'membership_id' => $this->membership->id,
+            'group_id' => $this->membership->group->id,
         ];
     }
 }

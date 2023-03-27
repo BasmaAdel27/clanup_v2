@@ -16,7 +16,6 @@
                 <div class="dropdown nav-item me-3 dropdown-messages">
                     @php
                         $notifications = $auth_user->notifications()->orderBy('read_at', 'asc')->orderBy('created_at', 'desc')->paginate(10);
-                        $messages = $auth_user->notifications()->where('type','App\Notifications\Mesages\sendMessage')->orderBy('read_at', 'asc')->orderBy('created_at', 'desc')->paginate(10);
                         $unread_count = $auth_user->unreadNotifications->count();
                     @endphp
                     <button class="position-relative bell-icon bg-light" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -46,7 +45,7 @@
                 </div>
                 <div class="nav-item dropdown border-start ps-3">
                     <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
-                        <span class="avatar avatar-sm border" style="background-image: url({{ $auth_user->avatar }})"></span>
+                        <span class="avatar avatar-sm border" style="background-image: url({{asset('assets/images/default-avatar.png')}})"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                         @if ($auth_user->isAdmin())

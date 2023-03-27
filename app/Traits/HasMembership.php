@@ -202,7 +202,7 @@ trait HasMembership
     public function unsubscribeFromGroup(Group $group)
     {
         if($this->isOrganizerOf($group) || !$this->isMemberOf($group)) return;
-
+                // dd($group);
         return GroupMembership::updateOrCreate(
             ['user_id' => $this->id, 'group_id' => $group->id],
             ['membership' => GroupMembership::UNSUBSCRIBED]

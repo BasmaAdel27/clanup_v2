@@ -32,7 +32,7 @@
     </section>
 @endsection
 @if(count($markers)>0)
-@section('page_body_scripts')
+@push('page_body_scripts')
 <script>
     window.onload=function (){
         initial();
@@ -156,5 +156,5 @@
     };
 </script>
 <script src="{{asset('assets/js/map.js')}}"></script>
-@endsection
+@endpush
 @endif

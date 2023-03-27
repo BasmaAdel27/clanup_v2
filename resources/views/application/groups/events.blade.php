@@ -19,14 +19,14 @@
                         </div>
                         <nav class="nav side-nav flex-row flex-nowrap flex-lg-column flex-lg-wrap">
                             @if ($auth_user and $auth_user->hasOrganizerRolesOf($group))
-                                <a class="nav-link text-nowrap {{ $tab == 'draft' ? 'text-primary fw-bold' : '' }}" href="{{ route('groups.events.draft', ['group' => $group->slug]) }}#events">
+                                <a class="nav-link text-nowrap {{ $tab == 'draft' ? 'text-primary fw-bold' : '' }}" href="{{ route('groups.events.draft', ['group' => $group->slug,'x'=>$group->id]) }}#events">
                                     {{ __('Drafts') }}
                                 </a>
                             @endif  
-                            <a class="nav-link text-nowrap {{ $tab == 'upcoming' ? 'text-primary fw-bold' : '' }}" href="{{ route('groups.events', ['group' => $group->slug]) }}#events">
+                            <a class="nav-link text-nowrap {{ $tab == 'upcoming' ? 'text-primary fw-bold' : '' }}" href="{{ route('groups.events', ['group' => $group->slug,'x'=>$group->id]) }}#events">
                                 {{ __('Upcoming') }}
                             </a>
-                            <a class="nav-link text-nowrap {{ $tab == 'past' ? 'text-primary fw-bold' : '' }}" href="{{ route('groups.events.past', ['group' => $group->slug]) }}#events">
+                            <a class="nav-link text-nowrap {{ $tab == 'past' ? 'text-primary fw-bold' : '' }}" href="{{ route('groups.events.past', ['group' => $group->slug,'x'=>$group->id]) }}#events">
                                 {{ __('Past') }}
                             </a>
                         </nav>

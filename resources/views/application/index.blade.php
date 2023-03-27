@@ -10,15 +10,21 @@
                     <div class="col">
                         <h3 class="h1">{{ __('Suggested Events') }}</h3>
                     </div>
+                    @if(count($suggested_events)>0)
+
                     <div class="col-md-4 d-lg-flex align-items-center justify-content-end">
                         <a class="btn btn-outline-primary" href="{{ route('suggested_events') }}">
                             {{ __('See all your events') }}
                         </a>
                     </div>
+                    @endif
                 </div>
+                @if(count($suggested_events)>0)
+                <div id="map" style="height: 400px; width:100%;margin-bottom: 30px" ></div>
+                @endif
                 @include('application.groups.events._event_slider', ['events' => $suggested_events])
             </section>
-
+           @if(count($suggested_groups)>0)
             <section>
                 <div class="row mb-3">
                     <div class="col">
@@ -38,7 +44,7 @@
                     @endforeach
                 </div>
             </section>
-
+            @endif
             @endif
         @if ($auth_user and $auth_user->isOrganizerOfAnyGroup() && count($events_from_groups_you_organize) > 0)
             <section>
@@ -203,8 +209,8 @@
         @endif
     </div>
 @endsection
-@if(count($markers) > 0)
-@section('page_body_scripts')
+@if(auth()->user() && count($markers) > 0)
+@push('page_body_scripts')
 <script>
     window.onload=function (){
         initial();
@@ -328,5 +334,5 @@
     };
 </script>
 <script src="{{asset('assets/js/map.js')}}"></script>
-@endsection
+@endpush
 @endif

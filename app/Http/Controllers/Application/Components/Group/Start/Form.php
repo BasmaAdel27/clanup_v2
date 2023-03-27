@@ -169,7 +169,7 @@ class Form extends Component
         // Attach topics
         $group->attachTopics(array_column($this->selected_interests, 'id'));
 
-        return redirect()->route('groups.about', ['group' => $group->slug]);
+        return redirect()->route('groups.about', ['group' => $group->slug,'x'=>$group->id]);
     }
 
     public function render()

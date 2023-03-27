@@ -314,7 +314,7 @@ class EventController extends Controller
 
         // Announce the event if it is not already announced
         if (!$event->announced_at) {
-            $event->sendAnnouncmentToMembers();
+//            $event->sendAnnouncmentToMembers();
             $event->update(['announced_at' => now()]);
         }
 

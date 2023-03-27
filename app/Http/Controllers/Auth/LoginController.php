@@ -8,6 +8,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
@@ -30,7 +31,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -40,6 +41,7 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    
     }
 
     /**
@@ -49,10 +51,21 @@ class LoginController extends Controller
      * @param  mixed  $user
      * @return mixed
      */
+      public function showLoginForm()
+    {
+          $error='';
+        return view('auth.login',compact('error'));
+    }
     protected function authenticated(Request $request, $user)
     {
-        $user->update(['timezone' => $request->timezone ?? '']);
 
+        if($user->timezone == '' || $user->timezone == null ) {
+            $timezone=Session::get('timezone');
+            $user->timezone = $timezone;
+            $user->save();
+        }
+
+       
         if ($request->_redirect) {
             $this->redirectTo = $request->_redirect;
         }
@@ -64,7 +77,7 @@ class LoginController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function redirectToProvider($provider)
-    {
+    { 
         return Socialite::driver($provider)->redirect();
     }
 
@@ -74,9 +87,10 @@ class LoginController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function handleProviderCallback($provider)
-    {
+    {      
+
         $user = Socialite::driver($provider)->user();
-        
+        // dd($user);
         // Check if there is an existing user with this provider
         if ($existed_user = User::where(['email' => $user->getEmail(), 'provider' => $provider, 'provider_id' => $user->getId()])->first()) {
             // Login user
@@ -92,23 +106,35 @@ class LoginController extends Controller
         // If no user found by email, create a new user
         $name_array = split_name($user->getName());
         if ($user->getEmail() == null){
-            $user = User::create([
+            if($exist_user=User::where('provider_id',$user->getId())->first()){
+                Auth::login($exist_user);
+                return redirect($this->redirectTo);
+            }
+
+            if(User::where('provider_id',$user->getId())->exists()){
+                return redirect('/login')->withErrors(['email' => __('This email is already in use!')]);
+            }
+
+             $user = User::create([
                 'first_name' => $name_array[0],
                 'last_name' => $name_array[1],
                 'email' => $user->getId().'@facebook.com',
                 'provider_id' => $user->getId(),
-                ]);
+            ]);
+
         }else{
             $user = User::create([
                 'first_name' => $name_array[0],
                 'last_name' => $name_array[1],
                 'email' => $user->getEmail(),
                 'provider_id' => $user->getId(),
+
             ]);
         }
         $user->update([
             'provider' => $provider,
             'role' => 'user',
+            'timezone'=>'Africa/Cairo',
             'email_verified_at'=>now()
         ]);
 
@@ -119,6 +145,7 @@ class LoginController extends Controller
         Auth::login($user);
 
         // Redirect user back
+        // dd(Session::get('timezone'));
         return redirect($this->redirectTo);
     }
 }

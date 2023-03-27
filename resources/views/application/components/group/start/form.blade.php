@@ -128,7 +128,7 @@
                 <p class="text-center">{{ __('Step 4/5') }}</p>
             </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-8 mb-3">
             <h1>{{ __('what will your group\'s status be?') }}</h1>
             <div class="form-check">
                 <label class="form-check-label">
@@ -140,8 +140,6 @@
                     <input type="radio" class="form-check-input" wire:model="group_status" value="private">{{__('private')}}
                 </label>
             </div>
-        </div>
-        <div class="col-md-8 mb-3">
             @error('group_status') <span class="error text-danger">{{ $message }}</span> @enderror
         </div>
         <div class="row d-flex justify-content-center">
@@ -159,7 +157,7 @@
                 <p class="text-center">{{ __('Step 5/5') }}</p>
             </div>
         </div>
-        <div class="col-md-8" wire:ignore>
+        <div class="col-md-8">
             <h1>{{ __('Now describe what your group will be about') }}</h1>
             <p>{{ __('People will see this when we promote your group, but you\'ll be able to add to it later, too.') }}</p>
             <ol class="px-3">

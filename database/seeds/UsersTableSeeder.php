@@ -18,6 +18,7 @@ class UsersTableSeeder extends Seeder
             'last_name' => 'Admin',
             'email'  => 'hookshamosiba201555@gmail.com',
             'password' => Hash::make("password"),
+            'timezone'=>'Africa/Cairo',
             'role' => 'admin',
         ]);
     }

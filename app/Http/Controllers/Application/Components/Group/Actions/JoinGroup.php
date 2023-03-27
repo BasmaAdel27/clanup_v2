@@ -41,14 +41,17 @@ class JoinGroup extends Component
             $this->welcome_member = true;
             $this->show_modal = true;
         }
+        return redirect(request()->header('Referer'));
     }
 
     public function unsubscribe_from_group()
     {
         $user = auth()->user();
-
+            //  dd($user,$this->group);
         // Detach membership
         $user->unsubscribeFromGroup($this->group);
+        return redirect(request()->header('Referer'));
+
     }
 
     public function revert_candidate_request()

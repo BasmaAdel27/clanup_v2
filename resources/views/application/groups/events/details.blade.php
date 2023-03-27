@@ -18,7 +18,7 @@
                     </div>
                     <div class="col-12">
                         <div class="d-flex align-items-center">
-                            <img class="avatar border" src="{{ $group->createdBy->avatar }}" alt="{{ $group->createdBy->full_name }}">
+                            <img class="avatar border" src="{{ asset('assets/images/default-avatar.png') }}" alt="{{ $group->createdBy->full_name }}">
                             <p class="ms-2 mb-0">
                                 <span class="text-muted">{{ __('Hosted by') }}</span><br>
                                 <span>{{ $group->createdBy->full_name }}</span>
@@ -105,7 +105,7 @@
                 </div>
 
                 <div class="col-lg-4 sticky-top sticky-side">
-                    @can('update', $event)
+                    @if(auth()->user()->hasOrganizerRolesOf($group))
                         <div class="row mb-3">
                             <div class="dropdown">
                                 <button class="col-12 btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -152,9 +152,9 @@
                                 </div>
                             </div>
                         @endif
-                    @endcan
+                    @endif
 
-                    <a class="card card-link mb-3" href="{{ route('groups.about', $group->slug) }}">
+                    <a class="card card-link mb-3" href="{{ route('groups.about', [$group->slug,'x'=>$group->id]) }}">
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-auto">

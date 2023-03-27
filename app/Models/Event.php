@@ -368,13 +368,13 @@ class Event extends Model implements HasMedia
      *
      * @return void
      */
-    public function sendAnnouncmentToMembers()
-    {
-        try {
-            $members = $this->group->members;
-            Notification::send($members, new Announcement($this));
-        } catch (\Throwable $th) {}
-    }
+//    public function sendAnnouncmentToMembers()
+//    {
+//        try {
+//            $members = $this->group->members;
+//            Notification::sendNow($members, new Announcement($this));
+//        } catch (\Throwable $th) {}
+//    }
 
     /**
      * Scope a query to filter events by parameters

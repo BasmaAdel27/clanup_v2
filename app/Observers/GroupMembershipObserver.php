@@ -7,9 +7,9 @@ use App\Events\Group\MembershipCreated;
 use App\Jobs\ProcessWaitingApprovalEventRSVP;
 use App\Models\GroupMembership;
 use App\Notifications\Group\MembershipChanged;
-use App\Notifications\Group\Organizer\CandidateRequested;
-use App\Notifications\Group\Organizer\MemberJoined;
-use App\Notifications\Group\Organizer\MemberLeaved;
+use App\Notifications\Group\CandidateRequested;
+use App\Notifications\Group\MemberJoin;
+use App\Notifications\Group\MemberLeaved;
 use App\Services\Notification\Notification;
 
 class GroupMembershipObserver
@@ -33,7 +33,10 @@ class GroupMembershipObserver
         // Send notification when new member joined to the group
         if($membership->membership == GroupMembership::MEMBER){
             $users = $membership->group->all_organizers;
-            Notification::send($users, new MemberJoined($membership));
+            // dd($users);
+         Notification::send($users, new MemberJoin($membership));
+
+        
         }
     }
 

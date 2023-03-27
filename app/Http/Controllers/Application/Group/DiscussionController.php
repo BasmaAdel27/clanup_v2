@@ -23,10 +23,12 @@ class DiscussionController extends Controller
         $group->visit(auth()->user(), $group);
         
         $discussions = $group->discussions()->latest()->paginate();
+        $error='';
 
         return view('application.groups.discussions', [
             'group' => $group,
             'discussions' => $discussions,
+            'error'=>$error
         ]);
     } 
 

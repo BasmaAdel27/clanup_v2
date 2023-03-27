@@ -1,5 +1,4 @@
 @if(count($events) > 0)
-    <div id="map" style="height: 400px; width:100%;margin-bottom: 30px" ></div>
     <div class="row">
         <div class="swiper-container swiper-init" data-swiper='{"slidesPerView":4,"spaceBetween":20,"roundLengths":true,"breakpoints":{"991":{"slidesPerView":2},"565":{"slidesPerView":1}},"navigation":{"nextEl": ".slideNext-btn","prevEl": ".slidePrev-btn"}}'>
             <div class="swiper-wrapper pb-5">

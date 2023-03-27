@@ -109,7 +109,7 @@ Route::middleware(ProtectAgainstSpam::class)->group(function () {
 //-----------------------------------------//
 //              GROUP ROUTES               //
 //-----------------------------------------//
-Route::group(['namespace' => 'Application\Group'], function () {
+Route::group(['namespace' => 'Application\Group','middleware' => 'verified'], function () {
     // Start a Group
     Route::get('/start', 'StartController@index')->name('start.index');
     Route::get('/start/group', 'StartController@create')->middleware('auth')->name('start.create');
@@ -153,7 +153,7 @@ Route::group(['namespace' => 'Application\Group'], function () {
     Route::get('/g/{group}/events/{event}/attendees/csv', 'EventController@export_attendees')->middleware(['auth', 'blocked_at_demo'])->name('groups.events.attendees.csv');
 
     // Group Settings
-    Route::group(['namespace' => 'Settings', 'middleware' => 'auth'], function () {
+    Route::group(['namespace' => 'Settings', 'middleware' => ['auth','verified']], function () {
         // >> Basic Settings
         Route::get('/g/{group}/settings', 'BasicSettingsController@index')->name('groups.settings');
         Route::post('/g/{group}/settings', 'BasicSettingsController@update')->middleware(['blocked_at_demo'])->name('groups.settings.basic.update');
@@ -209,7 +209,7 @@ Route::get('/groups', 'Application\Account\GroupController@index')->middleware('
 Route::get('/suggested_groups', 'Application\Account\GroupController@suggested_groups')->middleware('auth')->name('suggested_groups');
 
 // Account Settings
-Route::group(['namespace' => 'Application\Account\Settings', 'middleware' => 'auth'], function () {
+Route::group(['namespace' => 'Application\Account\Settings', 'middleware' => ['auth','verified']], function () {
     // Account Settings
     Route::get('/account/general', 'GeneralSettingsController@index')->name('account.settings.general');
     Route::get('/account/general/details', 'GeneralSettingsController@details')->name('account.settings.general.details');
@@ -245,7 +245,7 @@ Route::group(['namespace' => 'Application\Account\Settings', 'middleware' => 'au
 //-----------------------------------------//
 //              ADMIN ROUTES               //
 //-----------------------------------------//
-Route::group(['namespace' => 'Admin', 'prefix' => '/admin', 'middleware' => ['auth', 'admin', 'impersonate.protect']], function () {
+Route::group(['namespace' => 'Admin', 'prefix' => '/admin', 'middleware' => ['auth', 'admin', 'impersonate.protect','verified']], function () {
     // Dashboard
     Route::get('/dashboard', 'DashboardController@index')->name('admin.dashboard');
 

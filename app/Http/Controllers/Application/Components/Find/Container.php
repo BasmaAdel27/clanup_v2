@@ -97,7 +97,7 @@ class Container extends Component
             $data = Group::filter($this->search, $this->place, $this->category, $this->topic);
             $allData=$data->take($this->limit)->get();
             $markers=$allData->map(function ($item, $key) {
-                $url=env('APP_URL')."/g/".$item->group->slug."/events/".$item->uid;
+                $url=env('APP_URL')."/g/".$item->slug."/events/".$item->uid;
                 return [$item->getAddressAttribute()->lat, $item->getAddressAttribute()->lng,
                     $url];
             });

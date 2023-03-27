@@ -10,7 +10,7 @@
             <div class="col-lg-3 me-lg-auto">
                 <div class="card">
                     <div class="card-body p-3 text-center">
-                        <span class="avatar avatar-xl mb-3 avatar-rounded border" style="background-image: url({{ $member->avatar }})"></span>
+                        <span class="avatar avatar-xl mb-3 avatar-rounded border" style="background-image: url({{asset('assets/images/default-avatar.png')}})"></span>
                         <h3 class="m-0 mb-1"><a href="#">{{ $member->full_name }}</a></h3>
                         <div class="text-muted">{{ $member->getSetting('city') ? $member->getSetting('city') . ', ' : '' }} {{ $member->getSetting('country') }}</div>
                     </div>

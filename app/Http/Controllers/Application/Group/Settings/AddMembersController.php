@@ -25,7 +25,7 @@ class AddMembersController extends Controller
         }
         $members= $group->members()->pluck('user_id')->toArray();
         $allusers=array_diff(User::pluck('id')->toArray(),$members);
-        $users=User::select(DB::raw("CONCAT (first_name,' ',last_name) as name, id"))->find($allusers);
+        $users=User::where('email_verified_at','!=',null)->select(DB::raw("CONCAT (first_name,' ',last_name) as name, id"))->find($allusers);
 
         return view('application.groups.settings.addMembers', [
             'group' => $group,
@@ -45,12 +45,12 @@ class AddMembersController extends Controller
         }
 
         foreach ($request['user_id'] as $user) {
-            $data[$user]['membership'] =  20;
-        }
-       $group->membersship()->attach($data);
-
-
-
+            
+                GroupMembership::updateOrCreate(
+             ['user_id' => $user, 'group_id' => $group->id],
+            ['membership' => GroupMembership::MEMBER]);     
+            }
+        
 
         session()->flash('alert-success', __('add members updated'));
         return redirect()->route('groups.settings.addMembers', ['group' => $group->slug]);

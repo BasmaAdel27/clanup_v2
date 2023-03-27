@@ -58,7 +58,7 @@
                 $title = __(':event_title address have been changed', ['event_title' => $event->title]);
                 $link = route('groups.events.show', ['group' => $event->group->slug, 'event' => $event->uid]);
                 break;
-            case 'App\Notifications\Group\Organizer\MemberJoined':
+            case 'App\Notifications\Group\MemberJoin':
                 $group = \App\Models\Group::find($notification->data['group_id'] ?? 0);
                 if (!$group) {
                     $skip = true;
@@ -68,7 +68,7 @@
                 $title = __('New member joined to :group_name', ['group_name' => $group->name]);
                 $link = route('groups.members', ['group' => $group->slug]);
                 break;
-            case 'App\Notifications\Group\Organizer\MemberLeaved':
+            case 'App\Notifications\Group\MemberLeaved':
                 $group = \App\Models\Group::find($notification->data['group_id'] ?? 0);
                 if (!$group) {
                     $skip = true;
@@ -78,7 +78,7 @@
                 $title = __('One member leaved :group_name', ['group_name' => $group->name]);
                 $link = route('groups.members', ['group' => $group->slug]);
                 break;
-            case 'App\Notifications\Group\Organizer\CandidateRequested':
+            case 'App\Notifications\Group\CandidateRequested':
                 $group = \App\Models\Group::find($notification->data['group_id'] ?? 0);
                 if (!$group) {
                     $skip = true;
@@ -96,7 +96,7 @@
                 }
                 $image = $group->avatar;
                 $title = __(':group_name content visibility has been changed as closed.', ['group_name' => $group->name]);
-                $link = route('groups.about', ['group' => $group->slug]);
+                $link = route('groups.about', ['group' => $group->slug,'x' => $group->id]);
                 break;
             case 'App\Notifications\Group\MembershipChanged':
                 $group = \App\Models\Group::find($notification->data['group_id'] ?? 0);
@@ -106,7 +106,7 @@
                 }
                 $image = $group->avatar;
                 $title = __('Your membership has been changed for :group_name', ['group_name' => $group->name]);
-                $link = route('groups.about', ['group' => $group->slug]);
+                $link = route('groups.about', ['group' => $group->slug,'x' => $group->id]);
                 break;
                 case 'App\Notifications\Mesages\sendMessage':
                 $message = \App\Models\Message::find($notification->data['message_id'] ?? 0);

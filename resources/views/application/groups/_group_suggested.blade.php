@@ -1,4 +1,4 @@
-<a class="card card-link mb-3" href="{{ route('groups.about', $group->slug) }}">
+<a class="card card-link mb-3" href="{{ route('groups.about', [$group->slug,'x' => $group->id]) }}">
     <div class="card-body">
         <div class="row align-items-center">
             <div class="col-auto">
